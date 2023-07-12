@@ -28,7 +28,7 @@ class AuthenticationViewModel : ViewModel() {
 
     fun signInWithMongoDBAtlas(
         tokenId: String,
-        onSuccess: (Boolean) -> Unit,
+        onSuccess: () -> Unit,
         onError: (Exception) -> Unit
     ) {
         viewModelScope.launch {
@@ -41,10 +41,11 @@ class AuthenticationViewModel : ViewModel() {
                         )
                     ).loggedIn
                 }
-                onSuccess(result)
-                delay(600)
-                authenticatedState = true
-
+                if(result){
+                    onSuccess()
+                    delay(600)
+                    authenticatedState = true
+                }
             } catch (e: Exception) {
                 onError(e)
             }
