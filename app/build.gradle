@@ -21,6 +21,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        buildConfigField "String", "MONGO_APP_ID", project.property("MONGO_APP_ID")
+        buildConfigField "String", "CLIENT_ID_WEB", project.property("CLIENT_ID_WEB")
     }
 
     buildTypes {
@@ -38,6 +41,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.8'
