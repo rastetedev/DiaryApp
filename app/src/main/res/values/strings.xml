@@ -6,4 +6,8 @@
     <string name="please_wait">Please wait...</string>
     <string name="auth_success">Authentication successful</string>
     <string name="diary">Diary</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="confirm_sign_out">Are you sure you want to sign out from your Google Account?</string>
 </resources>

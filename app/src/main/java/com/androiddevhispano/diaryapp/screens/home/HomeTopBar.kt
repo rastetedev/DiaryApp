@@ -2,6 +2,7 @@ package com.androiddevhispano.diaryapp.screens.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,6 +30,9 @@ fun HomeTopBar(
         actions = {
             IconButton(onClick = onMenuClicked ) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+            }
+            IconButton(onClick = onMenuClicked ) {
+                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
         }
     )

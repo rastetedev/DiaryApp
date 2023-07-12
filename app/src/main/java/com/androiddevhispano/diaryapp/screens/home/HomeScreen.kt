@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -14,23 +15,31 @@ import androidx.compose.ui.Modifier
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
+    drawerState: DrawerState,
+    navigateToWrite: () -> Unit,
     onMenuClicked: () -> Unit,
-    navigateToWrite: () -> Unit
+    onSignOutClicked: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            HomeTopBar(
-                onMenuClicked = onMenuClicked
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = navigateToWrite) {
-                Icon(imageVector = Icons.Default.Edit, contentDescription = null)
-            }
-        }
+    NavigationDrawer(
+        drawerState = drawerState,
+        onSignOutClicked = onSignOutClicked
     ) {
-        Column(Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                HomeTopBar(
+                    onMenuClicked = onMenuClicked
+                )
+            },
 
+            floatingActionButton = {
+                FloatingActionButton(onClick = navigateToWrite) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                }
+            }
+        ) {
+            Column(Modifier.fillMaxSize()) {
+
+            }
         }
     }
 }

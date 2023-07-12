@@ -23,6 +23,10 @@ fun SetupNavGraph(startDestination: String, navHostController: NavHostController
         homeRoute(
             navigateToWrite = {
                 navHostController.navigate(Screen.Write.route)
+            },
+            navigateToAuthentication = {
+                navHostController.popBackStack()
+                navHostController.navigate(Screen.Authentication.route)
             }
         )
         writeRoute()
