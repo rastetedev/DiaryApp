@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.screens.authentication.authenticationRoute
+import com.androiddevhispano.diaryapp.screens.home.homeRoute
 
 @Composable
 fun SetupNavGraph(startDestination: String, navHostController: NavHostController) {
@@ -19,17 +20,14 @@ fun SetupNavGraph(startDestination: String, navHostController: NavHostController
                 navHostController.navigate(Screen.Home.route)
             }
         )
-        homeRoute()
+        homeRoute(
+            navigateToWrite = {
+                navHostController.navigate(Screen.Write.route)
+            }
+        )
         writeRoute()
     }
 }
-
-fun NavGraphBuilder.homeRoute() {
-    composable(route = Screen.Home.route) {
-
-    }
-}
-
 
 fun NavGraphBuilder.writeRoute() {
     composable(
