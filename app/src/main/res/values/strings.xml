@@ -4,4 +4,6 @@
     <string name="auth_subtitle">Please sign in to continue.</string>
     <string name="sign_in_google">Sign in with Google</string>
     <string name="please_wait">Please wait...</string>
+    <string name="sign_in_error">There is an error with your login setup.</string>
+    <string name="auth_success">Authentication successful</string>
 </resources>

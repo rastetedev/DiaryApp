@@ -8,22 +8,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
+import com.androiddevhispano.diaryapp.screens.authentication.authenticationRoute
 
 @Composable
 fun SetupNavGraph(startDestination: String, navHostController: NavHostController) {
     NavHost(navController = navHostController, startDestination = startDestination) {
-        authenticationRoute()
+        authenticationRoute(
+            navigateToHome = {
+                navHostController.popBackStack()
+                navHostController.navigate(Screen.Home.route)
+            }
+        )
         homeRoute()
         writeRoute()
     }
 }
-
-fun NavGraphBuilder.authenticationRoute() {
-    composable(route = Screen.Authentication.route) {
-
-    }
-}
-
 
 fun NavGraphBuilder.homeRoute() {
     composable(route = Screen.Home.route) {
