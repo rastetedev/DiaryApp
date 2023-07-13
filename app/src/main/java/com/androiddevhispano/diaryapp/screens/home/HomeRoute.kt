@@ -2,6 +2,7 @@ package com.androiddevhispano.diaryapp.screens.home
 
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +16,7 @@ import com.androiddevhispano.diaryapp.BuildConfig.MONGO_APP_ID
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
 import com.androiddevhispano.diaryapp.navigation.Screen
+import com.androiddevhispano.diaryapp.utils.RequestState
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +24,8 @@ import kotlinx.coroutines.withContext
 
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: () -> Unit,
-    navigateToAuthentication: () -> Unit
+    navigateToAuthentication: () -> Unit,
+    onDataLoaded: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
         val viewModel: HomeViewModel = viewModel()
@@ -34,6 +37,12 @@ fun NavGraphBuilder.homeRoute(
         }
 
         val coroutineScope = rememberCoroutineScope()
+
+        LaunchedEffect(key1 = diariesRequestState) {
+            if(diariesRequestState !is RequestState.Idle) {
+                onDataLoaded()
+            }
+        }
 
         HomeScreen(
             diariesRequestState = diariesRequestState,

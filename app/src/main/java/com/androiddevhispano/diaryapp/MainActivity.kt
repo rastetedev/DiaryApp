@@ -12,9 +12,13 @@ import com.androiddevhispano.diaryapp.ui.theme.DiaryAppTheme
 import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
+
+    private var keepSplashOpened = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition {
+            keepSplashOpened
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             DiaryAppTheme {
@@ -22,7 +26,10 @@ class MainActivity : ComponentActivity() {
 
                 SetupNavGraph(
                     startDestination = getStartDestination(),
-                    navHostController = navController
+                    navHostController = navController,
+                    onDataLoaded = {
+                        keepSplashOpened = false
+                    }
                 )
             }
         }

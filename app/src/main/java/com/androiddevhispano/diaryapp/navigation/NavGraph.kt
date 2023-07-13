@@ -12,13 +12,18 @@ import com.androiddevhispano.diaryapp.screens.authentication.authenticationRoute
 import com.androiddevhispano.diaryapp.screens.home.homeRoute
 
 @Composable
-fun SetupNavGraph(startDestination: String, navHostController: NavHostController) {
+fun SetupNavGraph(
+    startDestination: String,
+    navHostController: NavHostController,
+    onDataLoaded: () -> Unit
+) {
     NavHost(navController = navHostController, startDestination = startDestination) {
         authenticationRoute(
             navigateToHome = {
                 navHostController.popBackStack()
                 navHostController.navigate(Screen.Home.route)
-            }
+            },
+            onDataLoaded = onDataLoaded
         )
         homeRoute(
             navigateToWrite = {
@@ -27,7 +32,8 @@ fun SetupNavGraph(startDestination: String, navHostController: NavHostController
             navigateToAuthentication = {
                 navHostController.popBackStack()
                 navHostController.navigate(Screen.Authentication.route)
-            }
+            },
+            onDataLoaded = onDataLoaded
         )
         writeRoute()
     }
