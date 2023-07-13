@@ -1,15 +1,11 @@
 package com.androiddevhispano.diaryapp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.screens.authentication.authenticationRoute
 import com.androiddevhispano.diaryapp.screens.home.homeRoute
+import com.androiddevhispano.diaryapp.screens.write.writeRoute
 
 @Composable
 fun SetupNavGraph(
@@ -35,19 +31,10 @@ fun SetupNavGraph(
             },
             onDataLoaded = onDataLoaded
         )
-        writeRoute()
-    }
-}
-
-fun NavGraphBuilder.writeRoute() {
-    composable(
-        route = Screen.Write.route,
-        arguments = listOf(
-            navArgument(name = DIARY_ID_ARGUMENT) {
-                type = NavType.StringType
-                nullable = true
+        writeRoute(
+            onBackPressed = {
+                navHostController.popBackStack()
             }
         )
-    ) {
     }
 }
