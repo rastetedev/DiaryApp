@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.androiddevhispano.diaryapp.BuildConfig.MONGO_APP_ID
@@ -24,13 +25,18 @@ fun NavGraphBuilder.homeRoute(
     navigateToAuthentication: () -> Unit
 ) {
     composable(route = Screen.Home.route) {
-        val coroutineScope = rememberCoroutineScope()
+        val viewModel: HomeViewModel = viewModel()
+
+        val diariesRequestState by viewModel.diaries
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         var signOutDialogOpenedState by remember {
             mutableStateOf(false)
         }
 
+        val coroutineScope = rememberCoroutineScope()
+
         HomeScreen(
+            diariesRequestState = diariesRequestState,
             drawerState = drawerState,
             navigateToWrite = navigateToWrite,
             onMenuClicked = {
