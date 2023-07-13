@@ -16,4 +16,7 @@
     <string name="no_diaries">No diaries entries</string>
     <string name="delete_diary">Delete Diary</string>
     <string name="confirm_delete_diary">Are you sure you want to delete this diary?</string>
+    <string name="title">Title</string>
+    <string name="description_placeholder">Tell me about it</string>
+    <string name="save">Save</string>
 </resources>
