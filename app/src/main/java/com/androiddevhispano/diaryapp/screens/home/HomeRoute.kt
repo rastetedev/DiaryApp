@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 fun NavGraphBuilder.homeRoute(
-    navigateToWrite: () -> Unit,
+    navigateToWrite: (diaryId: String?) -> Unit,
     navigateToAuthentication: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
@@ -39,7 +39,7 @@ fun NavGraphBuilder.homeRoute(
         val coroutineScope = rememberCoroutineScope()
 
         LaunchedEffect(key1 = diariesRequestState) {
-            if(diariesRequestState !is RequestState.Idle) {
+            if (diariesRequestState !is RequestState.Idle) {
                 onDataLoaded()
             }
         }
@@ -47,7 +47,9 @@ fun NavGraphBuilder.homeRoute(
         HomeScreen(
             diariesRequestState = diariesRequestState,
             drawerState = drawerState,
-            navigateToWrite = navigateToWrite,
+            navigateToWrite = { diaryId ->
+                navigateToWrite(diaryId)
+            },
             onMenuClicked = {
                 coroutineScope.launch {
                     drawerState.open()

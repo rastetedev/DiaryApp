@@ -31,7 +31,7 @@ import java.time.LocalDate
 fun HomeScreen(
     diariesRequestState: RequestState<Map<LocalDate, List<Diary>>>,
     drawerState: DrawerState,
-    navigateToWrite: () -> Unit,
+    navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
     onSignOutClicked: () -> Unit
 ) {
@@ -51,7 +51,9 @@ fun HomeScreen(
             },
 
             floatingActionButton = {
-                FloatingActionButton(onClick = navigateToWrite) {
+                FloatingActionButton(onClick = {
+                    navigateToWrite(null)
+                }) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = null)
                 }
             }
@@ -62,8 +64,8 @@ fun HomeScreen(
                         modifier = Modifier
                             .padding(paddingValues),
                         diaryNotes = diariesRequestState.data,
-                        onDiaryClicked = {
-
+                        onDiaryClicked = { diaryId ->
+                            navigateToWrite(diaryId)
                         }
                     )
                 }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -21,7 +22,6 @@ import com.google.accompanist.pager.rememberPagerState
 fun NavGraphBuilder.writeRoute(
     onBackPressed: () -> Unit
 ) {
-
     composable(
         route = Screen.Write.route,
         arguments = listOf(
@@ -32,11 +32,15 @@ fun NavGraphBuilder.writeRoute(
         )
     ) {
 
+        val viewModel: WriteViewModel = viewModel()
+        val writeUiState = viewModel.uiState
+
         var deleteDiaryDialogOpenedState by remember {
             mutableStateOf(false)
         }
 
         val moodPagerState = rememberPagerState()
+
 
         WriteScreen(
             diary = Diary(),

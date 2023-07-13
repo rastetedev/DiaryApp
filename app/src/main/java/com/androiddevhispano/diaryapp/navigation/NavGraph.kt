@@ -22,8 +22,11 @@ fun SetupNavGraph(
             onDataLoaded = onDataLoaded
         )
         homeRoute(
-            navigateToWrite = {
-                navHostController.navigate(Screen.Write.route)
+            navigateToWrite = { diaryId ->
+                if (diaryId != null)
+                    navHostController.navigate(Screen.Write.navigateToDiary(diaryId))
+                else
+                    navHostController.navigate(Screen.Write.route)
             },
             navigateToAuthentication = {
                 navHostController.popBackStack()
