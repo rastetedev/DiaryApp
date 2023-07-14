@@ -13,4 +13,6 @@ interface MongoRepository {
     fun getAllDiaries(): Flow<RequestState<Map<LocalDate, List<Diary>>>>
 
     fun getDiaryById(diaryId: ObjectId) : RequestState<Diary>
+
+    suspend fun insertDiary(diary: Diary) : RequestState<Diary>
 }
