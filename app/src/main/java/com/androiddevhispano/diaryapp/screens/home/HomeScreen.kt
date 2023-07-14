@@ -70,16 +70,7 @@ fun HomeScreen(
                     )
                 }
 
-                diariesRequestState is RequestState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                else -> {
+                diariesRequestState is RequestState.Error -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -90,6 +81,15 @@ fun HomeScreen(
                                 fontWeight = FontWeight.Medium
                             )
                         )
+                    }
+                }
+
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
                 }
             }

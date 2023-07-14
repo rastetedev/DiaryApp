@@ -99,6 +99,29 @@ object MongoDB : MongoRepository {
             RequestState.Error(UserNotAuthenticatedException())
         }
     }
+
+    override suspend fun updateDiary(diary: Diary): RequestState<Diary> {
+        return if (user != null) {
+            realm.write {
+                val diaryQueried = query<Diary>(query = "_id == $0", diary._id).first().find()
+                if (diaryQueried != null) {
+                    with(diaryQueried) {
+                        title = diary.title
+                        description = diary.description
+                        mood = diary.mood
+                        images = diary.images
+                        date = diary.date
+                    }
+                    RequestState.Success(diaryQueried)
+                } else {
+                    RequestState.Error(DiaryNotExistException())
+                }
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
+        }
+    }
 }
 
 private class UserNotAuthenticatedException : Exception("User is not logged in")
+private class DiaryNotExistException : Exception("Queried Diary does not exist.")

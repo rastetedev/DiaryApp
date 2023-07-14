@@ -15,4 +15,6 @@ interface MongoRepository {
     fun getDiaryById(diaryId: ObjectId) : RequestState<Diary>
 
     suspend fun insertDiary(diary: Diary) : RequestState<Diary>
+
+    suspend fun updateDiary(diary: Diary) : RequestState<Diary>
 }

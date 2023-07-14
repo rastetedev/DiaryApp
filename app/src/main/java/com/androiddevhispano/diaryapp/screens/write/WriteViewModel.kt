@@ -12,6 +12,7 @@ import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.toInstant
+import com.androiddevhispano.diaryapp.utils.toRealmInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,16 +74,49 @@ class WriteViewModel(
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
+        if (uiState.diaryId != null) {
+            updateDiary(onSuccess, onError)
+        } else {
+            insertDiary(onSuccess, onError)
+        }
+    }
+
+    private fun insertDiary(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             val diarySavedResult = MongoDB.insertDiary(
                 Diary().apply {
                     title = uiState.title
                     description = uiState.description
                     mood = uiState.mood.name
+                    date = uiState.date.toRealmInstant()
                 }
             )
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 if (diarySavedResult is RequestState.Success) onSuccess()
+                else onError()
+            }
+        }
+    }
+
+    private fun updateDiary(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val diaryUpdatedResult = MongoDB.updateDiary(
+                Diary().apply {
+                    _id = ObjectId.invoke(uiState.diaryId!!)
+                    title = uiState.title
+                    description = uiState.description
+                    mood = uiState.mood.name
+                    date = uiState.date.toRealmInstant()
+                }
+            )
+            withContext(Dispatchers.Main) {
+                if (diaryUpdatedResult is RequestState.Success) onSuccess()
                 else onError()
             }
         }
