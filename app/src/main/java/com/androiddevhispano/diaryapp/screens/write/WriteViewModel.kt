@@ -7,11 +7,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevhispano.diaryapp.data.MongoDB
+import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.toInstant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
 
@@ -64,6 +67,25 @@ class WriteViewModel(
 
     fun setDate(date: Instant) {
         uiState = uiState.copy(date = date)
+    }
+
+    fun saveDiary(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val diarySavedResult = MongoDB.insertDiary(
+                Diary().apply {
+                    title = uiState.title
+                    description = uiState.description
+                    mood = uiState.mood.name
+                }
+            )
+            withContext(Dispatchers.Main){
+                if (diarySavedResult is RequestState.Success) onSuccess()
+                else onError()
+            }
+        }
     }
 }
 

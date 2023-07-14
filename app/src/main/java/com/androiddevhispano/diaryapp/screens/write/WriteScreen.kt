@@ -16,11 +16,13 @@ import com.google.accompanist.pager.PagerState
 fun WriteScreen(
     uiState: WriteUiState,
     moodPagerState: PagerState,
+    buttonEnabledState: Boolean,
     onBackPressed: () -> Unit,
     onMoodChanged: (String) -> Unit,
     onDeleteDiaryOptionClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
-    onDescriptionChanged: (String) -> Unit
+    onDescriptionChanged: (String) -> Unit,
+    onSaveButtonClicked : () -> Unit
 ) {
 
     LaunchedEffect(key1 = uiState.mood) {
@@ -47,6 +49,7 @@ fun WriteScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
                 moodPagerState = moodPagerState,
+                buttonEnabledState = buttonEnabledState,
                 title = uiState.title,
                 onTitleChanged = { title ->
                     onTitleChanged(title)
@@ -54,7 +57,8 @@ fun WriteScreen(
                 description = uiState.description,
                 onDescriptionChanged = { description ->
                     onDescriptionChanged(description)
-                }
+                },
+                onSaveButtonClicked = onSaveButtonClicked
             )
         }
     )

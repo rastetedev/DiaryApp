@@ -39,10 +39,12 @@ import com.google.accompanist.pager.PagerState
 fun WriteContent(
     modifier: Modifier = Modifier,
     moodPagerState: PagerState,
+    buttonEnabledState: Boolean,
     title: String,
     onTitleChanged: (String) -> Unit,
     description: String,
-    onDescriptionChanged: (String) -> Unit
+    onDescriptionChanged: (String) -> Unit,
+    onSaveButtonClicked: () -> Unit
 ) {
 
     val scrollState = rememberScrollState()
@@ -123,8 +125,9 @@ fun WriteContent(
             Spacer(modifier = Modifier.height(extraLarge))
             Button(
                 modifier = Modifier.fillMaxWidth(0.85f),
+                enabled = buttonEnabledState,
                 shape = Shapes().small,
-                onClick = {}
+                onClick = onSaveButtonClicked
             ) {
                 Text(text = stringResource(id = R.string.save))
             }

@@ -1,9 +1,11 @@
 package com.androiddevhispano.diaryapp.screens.write
 
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
@@ -33,16 +35,21 @@ fun NavGraphBuilder.writeRoute(
 
         val viewModel: WriteViewModel = viewModel()
         val writeUiState = viewModel.uiState
+        val buttonEnabledState = remember(writeUiState.title, writeUiState.description) {
+            writeUiState.title.isNotEmpty() && writeUiState.description.isNotEmpty()
+        }
 
         var deleteDiaryDialogOpenedState by remember {
             mutableStateOf(false)
         }
 
         val moodPagerState = rememberPagerState()
+        val context = LocalContext.current
 
         WriteScreen(
             uiState = writeUiState,
             moodPagerState = moodPagerState,
+            buttonEnabledState = buttonEnabledState,
             onBackPressed = onBackPressed,
             onMoodChanged = { mood ->
                 viewModel.setMood(Mood.valueOf(mood))
@@ -55,6 +62,25 @@ fun NavGraphBuilder.writeRoute(
             },
             onDescriptionChanged = { description ->
                 viewModel.setDescription(description)
+            },
+            onSaveButtonClicked = {
+                viewModel.saveDiary(
+                    onSuccess = {
+                        onBackPressed()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.save_diary_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onError = {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.save_diary_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
             }
         )
 
