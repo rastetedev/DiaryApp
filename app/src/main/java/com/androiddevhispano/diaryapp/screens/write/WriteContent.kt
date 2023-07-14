@@ -98,8 +98,8 @@ fun WriteContent(
             )
             TextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = title,
-                onValueChange = onTitleChanged,
+                value = description,
+                onValueChange = onDescriptionChanged,
                 placeholder = {
                     Text(text = stringResource(id = R.string.description_placeholder))
                 },

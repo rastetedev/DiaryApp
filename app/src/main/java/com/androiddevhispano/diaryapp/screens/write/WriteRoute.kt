@@ -12,11 +12,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
-import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
-
 
 @OptIn(ExperimentalPagerApi::class)
 fun NavGraphBuilder.writeRoute(
@@ -41,13 +39,18 @@ fun NavGraphBuilder.writeRoute(
 
         val moodPagerState = rememberPagerState()
 
-
         WriteScreen(
-            diary = Diary(),
+            uiState = writeUiState,
             moodPagerState = moodPagerState,
             onBackPressed = onBackPressed,
             onDeleteDiaryOptionClicked = {
                 deleteDiaryDialogOpenedState = true
+            },
+            onTitleChanged = { title ->
+                viewModel.setTitle(title)
+            },
+            onDescriptionChanged = { description ->
+                viewModel.setDescription(description)
             }
         )
 

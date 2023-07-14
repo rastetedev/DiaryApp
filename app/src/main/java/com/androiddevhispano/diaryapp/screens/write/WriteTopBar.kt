@@ -26,12 +26,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.androiddevhispano.diaryapp.R
-import com.androiddevhispano.diaryapp.models.Diary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WriteTopBar(
-    diary: Diary?,
+    diaryId: String?,
+    moodName: String,
     onBackPressed: () -> Unit,
     onDeleteDiaryOptionClicked: () -> Unit
 ) {
@@ -50,7 +50,7 @@ fun WriteTopBar(
             Column {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Happy",
+                    text = moodName,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -71,7 +71,8 @@ fun WriteTopBar(
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
             }
-            diary?.let {
+
+            diaryId?.let {
                 IconButton(
                     onClick = {
                         showDeleteDiaryOption = true

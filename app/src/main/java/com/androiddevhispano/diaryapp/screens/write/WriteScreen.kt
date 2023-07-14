@@ -4,24 +4,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.androiddevhispano.diaryapp.models.Diary
+import com.androiddevhispano.diaryapp.models.Mood
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun WriteScreen(
-    diary: Diary?,
+    uiState: WriteUiState,
     moodPagerState: PagerState,
     onBackPressed: () -> Unit,
-    onDeleteDiaryOptionClicked: () -> Unit
+    onDeleteDiaryOptionClicked: () -> Unit,
+    onTitleChanged: (String) -> Unit,
+    onDescriptionChanged: (String) -> Unit
 ) {
+
+    LaunchedEffect(key1 = uiState.mood) {
+        moodPagerState.scrollToPage(Mood.valueOf(uiState.mood.name).ordinal)
+    }
 
     Scaffold(
         topBar = {
             WriteTopBar(
-                diary = diary,
+                diaryId = uiState.diaryId,
+                moodName = uiState.mood.name,
                 onBackPressed = onBackPressed,
                 onDeleteDiaryOptionClicked = onDeleteDiaryOptionClicked
             )
@@ -32,13 +40,13 @@ fun WriteScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
                 moodPagerState = moodPagerState,
-                title = "",
-                onTitleChanged = {
-
+                title = uiState.title,
+                onTitleChanged = { title ->
+                    onTitleChanged(title)
                 },
-                description = "",
-                onDescriptionChanged = {
-
+                description = uiState.description,
+                onDescriptionChanged = { description ->
+                    onDescriptionChanged(description)
                 }
             )
         }
