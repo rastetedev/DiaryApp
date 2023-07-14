@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
@@ -33,12 +34,20 @@ import com.androiddevhispano.diaryapp.utils.dateSelectedFormatter
 fun WriteTopBar(
     uiState: WriteUiState,
     onBackPressed: () -> Unit,
+    onCalendarClicked: () -> Unit,
+    onRestoreDateClicked: () -> Unit,
     onDeleteDiaryOptionClicked: () -> Unit
 ) {
     var showDeleteDiaryOption by remember { mutableStateOf(false) }
 
     val diaryDate = remember(uiState.date) {
         dateSelectedFormatter().format(uiState.date)
+    }
+
+    val updatedDate = remember(uiState.updatedDate) {
+        uiState.updatedDate?.let {
+            dateSelectedFormatter().format(it)
+        }
     }
 
     CenterAlignedTopAppBar(
@@ -63,7 +72,7 @@ fun WriteTopBar(
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = diaryDate,
+                    text = updatedDate ?: run { diaryDate },
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
@@ -72,9 +81,16 @@ fun WriteTopBar(
             }
         },
         actions = {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+            if (uiState.updatedDate != null) {
+                IconButton(onClick = onRestoreDateClicked) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                }
+            } else {
+                IconButton(onClick = onCalendarClicked) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+                }
             }
+
 
             uiState.diaryId?.let {
                 IconButton(

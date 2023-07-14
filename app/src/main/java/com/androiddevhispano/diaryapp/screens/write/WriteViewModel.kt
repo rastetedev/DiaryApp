@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
+import java.time.ZonedDateTime
 
 class WriteViewModel(
     private val savedStateHandle: SavedStateHandle
@@ -66,8 +67,20 @@ class WriteViewModel(
         uiState = uiState.copy(mood = mood)
     }
 
-    fun setDate(date: Instant) {
+    private fun setDate(date: Instant) {
         uiState = uiState.copy(date = date)
+    }
+
+    fun updateDate(date: ZonedDateTime) {
+        uiState = uiState.copy(
+            updatedDate = date.toInstant()
+        )
+    }
+
+    fun returnToPreviousDate() {
+        uiState = uiState.copy(
+            updatedDate = null
+        )
     }
 
     fun saveDiary(
@@ -91,7 +104,8 @@ class WriteViewModel(
                     title = uiState.title
                     description = uiState.description
                     mood = uiState.mood.name
-                    date = uiState.date.toRealmInstant()
+                    date = uiState.updatedDate?.toRealmInstant()
+                        ?: run { uiState.date.toRealmInstant() }
                 }
             )
             withContext(Dispatchers.Main) {
@@ -112,7 +126,8 @@ class WriteViewModel(
                     title = uiState.title
                     description = uiState.description
                     mood = uiState.mood.name
-                    date = uiState.date.toRealmInstant()
+                    date = uiState.updatedDate?.toRealmInstant()
+                        ?: run { uiState.date.toRealmInstant() }
                 }
             )
             withContext(Dispatchers.Main) {
@@ -129,5 +144,6 @@ data class WriteUiState(
     val title: String = "",
     val description: String = "",
     val mood: Mood = Mood.Neutral,
-    val date: Instant = Instant.now()
+    val date: Instant = Instant.now(),
+    val updatedDate: Instant? = null
 )

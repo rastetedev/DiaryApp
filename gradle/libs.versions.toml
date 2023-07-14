@@ -8,7 +8,7 @@ kotlinx-coroutines-core-version = "1.7.2"
 lifecycle-runtime-version = "2.6.1"
 realm-version = "1.10.0"
 room-version = "2.5.2"
-sheets-dialogs-time-version = "1.0.2"
+sheets-dialogs-time-version = "1.2.0"
 
 [libraries]
 android-tools-desugar = "com.android.tools:desugar_jdk_libs:2.0.3"

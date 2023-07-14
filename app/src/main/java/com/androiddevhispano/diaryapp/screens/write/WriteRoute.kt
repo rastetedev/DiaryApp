@@ -57,6 +57,12 @@ fun NavGraphBuilder.writeRoute(
             onDeleteDiaryOptionClicked = {
                 deleteDiaryDialogOpenedState = true
             },
+            onDateTimeUpdated = { newDate ->
+                viewModel.updateDate(newDate)
+            },
+            onRestoreDateClicked = {
+                viewModel.returnToPreviousDate()
+            },
             onTitleChanged = { title ->
                 viewModel.setTitle(title)
             },
