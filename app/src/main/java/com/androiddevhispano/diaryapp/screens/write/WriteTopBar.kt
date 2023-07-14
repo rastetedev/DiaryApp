@@ -36,7 +36,7 @@ fun WriteTopBar(
     onBackPressed: () -> Unit,
     onCalendarClicked: () -> Unit,
     onRestoreDateClicked: () -> Unit,
-    onDeleteDiaryOptionClicked: () -> Unit
+    onDeleteDiaryClicked: () -> Unit
 ) {
     var showDeleteDiaryOption by remember { mutableStateOf(false) }
 
@@ -116,7 +116,7 @@ fun WriteTopBar(
                         },
                         onClick = {
                             showDeleteDiaryOption = false
-                            onDeleteDiaryOptionClicked()
+                            onDeleteDiaryClicked()
                         }
                     )
                 }

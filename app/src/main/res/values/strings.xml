@@ -19,6 +19,9 @@
     <string name="title">Title</string>
     <string name="description_placeholder">Tell me about it</string>
     <string name="save">Save</string>
-    <string name="save_diary_error">There was an error saving diary</string>
     <string name="save_diary_success">Diary entry saved successfully</string>
+    <string name="save_diary_error">There was an error saving diary</string>
+    <string name="delete_diary_success">Diary entry deleted successfully</string>
+    <string name="delete_diary_error">There was an error deleting diary</string>
+
 </resources>

@@ -37,7 +37,7 @@ fun WriteScreen(
     buttonEnabledState: Boolean,
     onBackPressed: () -> Unit,
     onMoodChanged: (String) -> Unit,
-    onDeleteDiaryOptionClicked: () -> Unit,
+    onDeleteDiaryClicked: () -> Unit,
     onDateTimeUpdated: (ZonedDateTime) -> Unit,
     onRestoreDateClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
@@ -74,7 +74,7 @@ fun WriteScreen(
                     dateSheetPickerState.show()
                 },
                 onRestoreDateClicked = onRestoreDateClicked,
-                onDeleteDiaryOptionClicked = onDeleteDiaryOptionClicked
+                onDeleteDiaryClicked = onDeleteDiaryClicked
             )
         },
         content = { paddingValues ->

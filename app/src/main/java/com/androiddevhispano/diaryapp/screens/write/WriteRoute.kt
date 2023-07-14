@@ -54,7 +54,7 @@ fun NavGraphBuilder.writeRoute(
             onMoodChanged = { mood ->
                 viewModel.setMood(Mood.valueOf(mood))
             },
-            onDeleteDiaryOptionClicked = {
+            onDeleteDiaryClicked = {
                 deleteDiaryDialogOpenedState = true
             },
             onDateTimeUpdated = { newDate ->
@@ -98,7 +98,23 @@ fun NavGraphBuilder.writeRoute(
                 deleteDiaryDialogOpenedState = false
             },
             onConfirmClicked = {
-
+                viewModel.deleteDiary(
+                    onSuccess = {
+                        onBackPressed()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.delete_diary_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    },
+                    onError = {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.delete_diary_error),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                )
             }
         )
     }
