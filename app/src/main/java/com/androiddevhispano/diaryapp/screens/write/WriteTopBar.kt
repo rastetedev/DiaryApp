@@ -26,16 +26,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.androiddevhispano.diaryapp.R
+import com.androiddevhispano.diaryapp.utils.dateSelectedFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WriteTopBar(
-    diaryId: String?,
-    moodName: String,
+    uiState: WriteUiState,
     onBackPressed: () -> Unit,
     onDeleteDiaryOptionClicked: () -> Unit
 ) {
     var showDeleteDiaryOption by remember { mutableStateOf(false) }
+
+    val diaryDate = remember(uiState.date) {
+        dateSelectedFormatter().format(uiState.date)
+    }
 
     CenterAlignedTopAppBar(
         navigationIcon = {
@@ -50,7 +54,7 @@ fun WriteTopBar(
             Column {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = moodName,
+                    text = uiState.mood.name,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -59,7 +63,7 @@ fun WriteTopBar(
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "10 JAN 2023, 10:00 AM",
+                    text = diaryDate,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
@@ -72,7 +76,7 @@ fun WriteTopBar(
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
             }
 
-            diaryId?.let {
+            uiState.diaryId?.let {
                 IconButton(
                     onClick = {
                         showDeleteDiaryOption = true

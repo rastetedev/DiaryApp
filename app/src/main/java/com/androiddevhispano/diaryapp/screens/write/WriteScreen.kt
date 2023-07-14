@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import com.androiddevhispano.diaryapp.models.Mood
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -16,6 +17,7 @@ fun WriteScreen(
     uiState: WriteUiState,
     moodPagerState: PagerState,
     onBackPressed: () -> Unit,
+    onMoodChanged: (String) -> Unit,
     onDeleteDiaryOptionClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit
@@ -25,11 +27,16 @@ fun WriteScreen(
         moodPagerState.scrollToPage(Mood.valueOf(uiState.mood.name).ordinal)
     }
 
+    LaunchedEffect(moodPagerState) {
+        snapshotFlow { moodPagerState.currentPage }.collect { page ->
+            onMoodChanged(Mood.values()[page].name)
+        }
+    }
+
     Scaffold(
         topBar = {
             WriteTopBar(
-                diaryId = uiState.diaryId,
-                moodName = uiState.mood.name,
+                uiState = uiState,
                 onBackPressed = onBackPressed,
                 onDeleteDiaryOptionClicked = onDeleteDiaryOptionClicked
             )

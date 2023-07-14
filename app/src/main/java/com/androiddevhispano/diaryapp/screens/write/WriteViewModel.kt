@@ -10,8 +10,10 @@ import com.androiddevhispano.diaryapp.data.MongoDB
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.utils.RequestState
+import com.androiddevhispano.diaryapp.utils.toInstant
 import kotlinx.coroutines.launch
 import org.mongodb.kbson.ObjectId
+import java.time.Instant
 
 class WriteViewModel(
     private val savedStateHandle: SavedStateHandle
@@ -41,6 +43,7 @@ class WriteViewModel(
                         setTitle(title)
                         setDescription(description)
                         setMood(Mood.valueOf(mood))
+                        setDate(date.toInstant())
                     }
                 }
             }
@@ -58,6 +61,10 @@ class WriteViewModel(
     fun setMood(mood: Mood) {
         uiState = uiState.copy(mood = mood)
     }
+
+    fun setDate(date: Instant) {
+        uiState = uiState.copy(date = date)
+    }
 }
 
 
@@ -66,4 +73,5 @@ data class WriteUiState(
     val title: String = "",
     val description: String = "",
     val mood: Mood = Mood.Neutral,
+    val date: Instant = Instant.now()
 )

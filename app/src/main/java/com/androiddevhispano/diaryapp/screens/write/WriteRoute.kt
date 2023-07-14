@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
+import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
@@ -43,6 +44,9 @@ fun NavGraphBuilder.writeRoute(
             uiState = writeUiState,
             moodPagerState = moodPagerState,
             onBackPressed = onBackPressed,
+            onMoodChanged = { mood ->
+                viewModel.setMood(Mood.valueOf(mood))
+            },
             onDeleteDiaryOptionClicked = {
                 deleteDiaryDialogOpenedState = true
             },
