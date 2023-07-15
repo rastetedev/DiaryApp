@@ -1,5 +1,6 @@
 package com.androiddevhispano.diaryapp.screens.write
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,9 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevhispano.diaryapp.data.MongoDB
 import com.androiddevhispano.diaryapp.models.Diary
+import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
+import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.RequestState
+import com.androiddevhispano.diaryapp.utils.createNameWith
 import com.androiddevhispano.diaryapp.utils.toInstant
 import com.androiddevhispano.diaryapp.utils.toRealmInstant
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +30,8 @@ class WriteViewModel(
 
     var uiState by mutableStateOf(WriteUiState())
         private set
+
+    val galleryState = GalleryState()
 
     init {
         getDiaryIdArgument()
@@ -150,6 +156,16 @@ class WriteViewModel(
                 }
             }
         }
+    }
+
+    fun addImage(imageUri: Uri, imageType: String) {
+        val remoteImagePath = imageUri createNameWith imageType
+        galleryState.addImage(
+            GalleryImage(
+                imageUri = imageUri,
+                remoteImagePath = remoteImagePath
+            )
+        )
     }
 }
 

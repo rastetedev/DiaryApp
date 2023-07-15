@@ -14,10 +14,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
-import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen
-import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
+import com.androiddevhispano.diaryapp.utils.getType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 
@@ -37,10 +36,11 @@ fun NavGraphBuilder.writeRoute(
 
         val viewModel: WriteViewModel = viewModel()
         val writeUiState = viewModel.uiState
+        val galleryState = viewModel.galleryState
+
         val buttonEnabledState = remember(writeUiState.title, writeUiState.description) {
             writeUiState.title.isNotEmpty() && writeUiState.description.isNotEmpty()
         }
-        val galleryState = remember { GalleryState() }
 
         var deleteDiaryDialogOpenedState by remember {
             mutableStateOf(false)
@@ -73,8 +73,11 @@ fun NavGraphBuilder.writeRoute(
             onDescriptionChanged = { description ->
                 viewModel.setDescription(description)
             },
-            onImageSelected = {
-                galleryState.addImage(GalleryImage(imageUri = it))
+            onImageSelected = { imageUri ->
+                viewModel.addImage(
+                    imageUri = imageUri,
+                    imageType = imageUri.getType(context)
+                )
             },
             onSaveButtonClicked = {
                 viewModel.saveDiary(
