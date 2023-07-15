@@ -17,6 +17,8 @@ import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.androiddevhispano.diaryapp.utils.RequestState
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,6 +72,7 @@ fun NavGraphBuilder.homeRoute(
             onConfirmClicked = {
                 coroutineScope.launch(Dispatchers.IO) {
                     App.create(MONGO_APP_ID).currentUser?.logOut()
+                    Firebase.auth.signOut()
                     withContext(Dispatchers.Main) {
                         navigateToAuthentication()
                     }

@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevhispano.diaryapp.BuildConfig
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.Credentials
 import io.realm.kotlin.mongodb.GoogleAuthType
@@ -41,7 +43,7 @@ class AuthenticationViewModel : ViewModel() {
                         )
                     ).loggedIn
                 }
-                if(result){
+                if (result) {
                     onSuccess()
                     delay(600)
                     authenticatedState = true
@@ -50,5 +52,21 @@ class AuthenticationViewModel : ViewModel() {
                 onError(e)
             }
         }
+    }
+
+    fun signInWithFirebase(
+        tokenId: String,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+        val credential = GoogleAuthProvider.getCredential(tokenId, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    onSuccess()
+                } else {
+                    it.exception?.let { onError }
+                }
+            }
     }
 }

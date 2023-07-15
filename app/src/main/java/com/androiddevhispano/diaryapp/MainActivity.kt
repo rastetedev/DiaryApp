@@ -9,6 +9,9 @@ import androidx.navigation.compose.rememberNavController
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.androiddevhispano.diaryapp.navigation.SetupNavGraph
 import com.androiddevhispano.diaryapp.ui.theme.DiaryAppTheme
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import io.realm.kotlin.mongodb.App
 
 class MainActivity : ComponentActivity() {
@@ -16,6 +19,7 @@ class MainActivity : ComponentActivity() {
     private var keepSplashOpened = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         installSplashScreen().setKeepOnScreenCondition {
             keepSplashOpened
         }
@@ -38,6 +42,7 @@ class MainActivity : ComponentActivity() {
 
 private fun getStartDestination(): String {
     val user = App.create(BuildConfig.MONGO_APP_ID).currentUser
-    return if (user != null && user.loggedIn) Screen.Home.route
+    val firebaseUser = Firebase.auth.currentUser
+    return if (user != null && user.loggedIn && firebaseUser != null) Screen.Home.route
     else Screen.Authentication.route
 }

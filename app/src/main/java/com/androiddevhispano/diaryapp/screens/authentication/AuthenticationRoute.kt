@@ -39,11 +39,19 @@ fun NavGraphBuilder.authenticationRoute(
                 oneTapSignInState.open()
             },
             onGoogleTokenIdReceived = { tokenId ->
-                viewModel.signInWithMongoDBAtlas(
+                viewModel.signInWithFirebase(
                     tokenId,
                     onSuccess = {
-                        messageBarState.addSuccess(context.getString(R.string.auth_success))
-                        viewModel.setLoading(false)
+                        viewModel.signInWithMongoDBAtlas(
+                            tokenId,
+                            onSuccess = {
+                                messageBarState.addSuccess(context.getString(R.string.auth_success))
+                                viewModel.setLoading(false)
+                            }, onError = { exception ->
+                                messageBarState.addError(exception)
+                                viewModel.setLoading(false)
+                            }
+                        )
                     },
                     onError = { exception ->
                         messageBarState.addError(exception)
