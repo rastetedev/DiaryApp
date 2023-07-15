@@ -1,32 +1,26 @@
 package com.androiddevhispano.diaryapp.screens.home.diary
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.androiddevhispano.diaryapp.components.LastImageOverlay
 import kotlin.math.max
 
 @Composable
@@ -90,30 +84,6 @@ fun Gallery(
     }
 }
 
-@Composable
-fun LastImageOverlay(
-    imageSize: Dp,
-    imageShape: CornerBasedShape,
-    remainingImages: Int
-) {
-    Box(
-        modifier = Modifier
-            .size(imageSize)
-            .clip(imageShape)
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = "+$remainingImages",
-            style = TextStyle(
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                fontWeight = FontWeight.Medium
-            ),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
-}
-
 @Preview
 @Composable
 fun GalleryPreview() {
@@ -123,8 +93,3 @@ fun GalleryPreview() {
     )
 }
 
-@Preview
-@Composable
-fun LastImageOverlayPreview() {
-    LastImageOverlay(imageSize = 40.dp, imageShape = Shapes().small, remainingImages = 2)
-}
