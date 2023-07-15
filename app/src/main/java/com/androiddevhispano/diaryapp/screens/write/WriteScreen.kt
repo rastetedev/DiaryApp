@@ -1,5 +1,6 @@
 package com.androiddevhispano.diaryapp.screens.write
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import com.androiddevhispano.diaryapp.models.Mood
+import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.toLocalDate
 import com.androiddevhispano.diaryapp.utils.toLocalTime
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -34,6 +36,7 @@ import java.time.ZonedDateTime
 fun WriteScreen(
     uiState: WriteUiState,
     moodPagerState: PagerState,
+    galleryState: GalleryState,
     buttonEnabledState: Boolean,
     onBackPressed: () -> Unit,
     onMoodChanged: (String) -> Unit,
@@ -42,7 +45,8 @@ fun WriteScreen(
     onRestoreDateClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
-    onSaveButtonClicked: () -> Unit
+    onSaveButtonClicked: () -> Unit,
+    onImageSelected: (Uri) -> Unit
 ) {
 
     val dateSheetPickerState = rememberUseCaseState()
@@ -83,6 +87,7 @@ fun WriteScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
                 moodPagerState = moodPagerState,
+                galleryState = galleryState,
                 buttonEnabledState = buttonEnabledState,
                 title = uiState.title,
                 onTitleChanged = { title ->
@@ -92,6 +97,8 @@ fun WriteScreen(
                 onDescriptionChanged = { description ->
                     onDescriptionChanged(description)
                 },
+                onImageSelected =onImageSelected,
+                onImageClicked = {},
                 onSaveButtonClicked = onSaveButtonClicked
             )
         }

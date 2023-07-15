@@ -1,11 +1,13 @@
 package com.androiddevhispano.diaryapp.screens.write
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,7 +36,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.androiddevhispano.diaryapp.R
+import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
+import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
+import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryUploader
 import com.androiddevhispano.diaryapp.ui.theme.Size.doubleExtraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraLarge
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -46,11 +51,14 @@ import com.google.accompanist.pager.PagerState
 fun WriteContent(
     modifier: Modifier = Modifier,
     moodPagerState: PagerState,
+    galleryState: GalleryState,
     buttonEnabledState: Boolean,
     title: String,
     onTitleChanged: (String) -> Unit,
     description: String,
     onDescriptionChanged: (String) -> Unit,
+    onImageSelected: (Uri) -> Unit,
+    onImageClicked: (GalleryImage) -> Unit,
     onSaveButtonClicked: () -> Unit
 ) {
 
@@ -146,13 +154,22 @@ fun WriteContent(
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = doubleExtraLarge),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(extraLarge))
+            GalleryUploader(
+                galleryState = galleryState,
+                onAddClicked = {
+                    focusManager.clearFocus()
+                },
+                onImageSelected = onImageSelected,
+                onImageClicked = onImageClicked
+            )
+            Spacer(modifier = Modifier.height(extraLarge))
             Button(
-                modifier = Modifier.fillMaxWidth(0.85f),
+                modifier = Modifier.fillMaxWidth(),
                 enabled = buttonEnabledState,
                 shape = Shapes().small,
                 onClick = onSaveButtonClicked

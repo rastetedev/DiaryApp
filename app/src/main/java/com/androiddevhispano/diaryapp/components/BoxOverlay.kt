@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -18,27 +19,43 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
+fun BoxOverlay(
+    size: Dp,
+    shape: CornerBasedShape,
+    content: @Composable () -> Unit,
+    onClick: (() -> Unit)? = null
+) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .clickable { onClick?.invoke() },
+        contentAlignment = Alignment.Center,
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun LastImageOverlay(
     imageSize: Dp,
     imageShape: CornerBasedShape,
     remainingImages: Int
 ) {
-    Box(
-        modifier = Modifier
-            .size(imageSize)
-            .clip(imageShape)
-            .background(MaterialTheme.colorScheme.primaryContainer),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = "+$remainingImages",
-            style = TextStyle(
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                fontWeight = FontWeight.Medium
-            ),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
+    BoxOverlay(
+        size = imageSize,
+        shape = imageShape,
+        content = {
+            Text(
+                text = "+$remainingImages",
+                style = TextStyle(
+                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    fontWeight = FontWeight.Medium
+                ),
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        })
 }
 
 @Preview

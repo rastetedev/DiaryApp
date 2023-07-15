@@ -3,7 +3,6 @@ package com.androiddevhispano.diaryapp.screens.home.diary
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Shapes
@@ -12,15 +11,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.androiddevhispano.diaryapp.components.LastImageOverlay
+import com.androiddevhispano.diaryapp.components.SimpleGalleryImage
 import kotlin.math.max
 
 @Composable
@@ -60,16 +55,10 @@ fun Gallery(
                 else
                     numberOfSlots.value
             ).forEach { image ->
-                AsyncImage(
-                    modifier = Modifier
-                        .clip(imageShape)
-                        .size(imageSize),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(image)
-                        .crossfade(true)
-                        .build(),
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null
+                SimpleGalleryImage(
+                    imageShape = imageShape,
+                    imageSize = imageSize,
+                    imageUrl = image
                 )
 
             }
