@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.androiddevhispano.diaryapp.components.GalleryImage
 import com.androiddevhispano.diaryapp.components.LastImageOverlay
-import com.androiddevhispano.diaryapp.components.SimpleGalleryImage
 import kotlin.math.max
 
 @Composable
@@ -57,12 +57,11 @@ fun Gallery(
                 else
                     numberOfSlots.value
             ).forEach { imageUri ->
-                SimpleGalleryImage(
+                GalleryImage(
+                    imageUri = imageUri,
                     imageShape = imageShape,
-                    imageSize = imageSize,
-                    imageUri = imageUri
+                    imageSize = imageSize
                 )
-
             }
             if (showLastImageOverlay) {
                 LastImageOverlay(

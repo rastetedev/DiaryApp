@@ -14,36 +14,14 @@ import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.androiddevhispano.diaryapp.R
-import com.androiddevhispano.diaryapp.models.GalleryImage
 
 @Composable
 fun GalleryImage(
-    galleryImage: GalleryImage,
+    imageUri: Uri,
     imageShape: Shape,
     imageSize: Dp,
-    onImageClicked: (GalleryImage) -> Unit
+    onImageClicked: (imageUri: Uri) -> Unit = {}
 ) {
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(galleryImage.imageUri)
-            .crossfade(true)
-            .build(),
-        modifier = Modifier
-            .clip(imageShape)
-            .size(imageSize)
-            .clickable { onImageClicked(galleryImage) },
-        placeholder = painterResource(R.drawable.logo),
-        contentScale = ContentScale.Crop,
-        contentDescription = null
-    )
-}
-
-@Composable
-fun SimpleGalleryImage(
-    imageShape: Shape,
-    imageSize: Dp,
-    imageUri: Uri
-){
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUri)
@@ -51,7 +29,8 @@ fun SimpleGalleryImage(
             .build(),
         modifier = Modifier
             .clip(imageShape)
-            .size(imageSize),
+            .size(imageSize)
+            .clickable { onImageClicked(imageUri) },
         placeholder = painterResource(R.drawable.logo),
         contentScale = ContentScale.Crop,
         contentDescription = null

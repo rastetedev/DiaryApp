@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.androiddevhispano.diaryapp.R
-import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryUploader
@@ -58,7 +57,7 @@ fun WriteContent(
     description: String,
     onDescriptionChanged: (String) -> Unit,
     onImageSelected: (Uri) -> Unit,
-    onImageClicked: (GalleryImage) -> Unit,
+    onImageClicked: (Uri) -> Unit,
     isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit
 ) {

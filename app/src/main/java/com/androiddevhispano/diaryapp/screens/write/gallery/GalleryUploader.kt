@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.androiddevhispano.diaryapp.components.GalleryImage
 import com.androiddevhispano.diaryapp.components.LastImageOverlay
-import com.androiddevhispano.diaryapp.models.GalleryImage
 import kotlin.math.max
 
 @Composable
@@ -33,7 +32,7 @@ fun GalleryUploader(
     spaceBetween: Dp = 12.dp,
     onAddClicked: () -> Unit,
     onImageSelected: (Uri) -> Unit,
-    onImageClicked: (GalleryImage) -> Unit,
+    onImageClicked: (Uri) -> Unit,
     isDownloadingImages: Boolean
 ) {
     val multiplePhotoPicker = rememberLauncherForActivityResult(
@@ -98,7 +97,7 @@ fun GalleryUploader(
                     galleryState.images.take(if (showLastImageOverlay) numberOfSlots - 1 else numberOfSlots)
                         .forEach { galleryImage ->
                             GalleryImage(
-                                galleryImage = galleryImage,
+                                imageUri = galleryImage.imageUri,
                                 imageShape = imageShape,
                                 imageSize = imageSize,
                                 onImageClicked = onImageClicked
