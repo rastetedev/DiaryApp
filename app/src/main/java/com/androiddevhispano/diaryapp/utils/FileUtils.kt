@@ -24,8 +24,8 @@ infix fun Uri.createNameWith(imageType: String): String {
 fun fetchImagesFromFirebase(
     remoteImageUrlList: List<String>,
     onImageDownload: (Uri) -> Unit,
-    onBucketDownloadFail: (Exception) -> Unit,
-    onBucketDownloadSuccess: () -> Unit
+    onBucketDownloadSuccess: (() -> Unit) = {},
+    onBucketDownloadFail: ((Exception) -> Unit) = {}
 ) {
     if (remoteImageUrlList.isNotEmpty()) {
         remoteImageUrlList.forEachIndexed { index, remoteImageUrl ->
@@ -43,4 +43,10 @@ fun fetchImagesFromFirebase(
             }
         }
     }
+}
+
+fun String.extractImagePath(): String {
+    val chunks = split("%2F")
+    val imageName = chunks[2].split("?").first()
+    return "$FIREBASE_IMAGES_DIRECTORY/${Firebase.auth.currentUser?.uid}/$imageName"
 }

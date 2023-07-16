@@ -7,7 +7,7 @@ object Size {
     val extraSmall = 2.dp
     val small = 4.dp
     val medium = 6.dp
-    val large = 8.0.dp
+    val large = 8.dp
     val extraLarge = 12.dp
     val doubleExtraLarge = 16.dp
     val screenPadding = 24.dp

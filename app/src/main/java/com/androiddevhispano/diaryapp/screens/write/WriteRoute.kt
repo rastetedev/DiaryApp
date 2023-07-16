@@ -79,6 +79,7 @@ fun NavGraphBuilder.writeRoute(
                     imageType = imageUri.getType(context)
                 )
             },
+            isDownloadingImages = viewModel.uiState.isDownloadingImages,
             onSaveButtonClicked = {
                 viewModel.saveDiary(
                     onSuccess = {

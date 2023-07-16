@@ -1,5 +1,6 @@
 package com.androiddevhispano.diaryapp.screens.home.diary
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.androiddevhispano.diaryapp.components.LastImageOverlay
 import com.androiddevhispano.diaryapp.components.SimpleGalleryImage
 import kotlin.math.max
@@ -21,7 +23,7 @@ import kotlin.math.max
 @Composable
 fun Gallery(
     modifier: Modifier = Modifier,
-    images: List<String>,
+    imageUriList: List<Uri>,
     imageSize: Dp = 40.dp,
     spaceBetween: Dp = 10.dp,
     imageShape: CornerBasedShape = Shapes().small
@@ -38,7 +40,7 @@ fun Gallery(
 
         val remainingImages = remember {
             derivedStateOf {
-                images.size - numberOfSlots.value + 1
+                imageUriList.size - numberOfSlots.value + 1
             }
         }
 
@@ -49,16 +51,16 @@ fun Gallery(
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(spaceBetween)) {
-            images.take(
+            imageUriList.take(
                 if (showLastImageOverlay)
                     numberOfSlots.value - 1 //The last slot is reserved to show LastImageOverlay
                 else
                     numberOfSlots.value
-            ).forEach { image ->
+            ).forEach { imageUri ->
                 SimpleGalleryImage(
                     imageShape = imageShape,
                     imageSize = imageSize,
-                    imageUrl = image
+                    imageUri = imageUri
                 )
 
             }
@@ -78,7 +80,12 @@ fun Gallery(
 fun GalleryPreview() {
     Gallery(
         modifier = Modifier.width(120.dp),
-        images = listOf("image1.png", "image2.png", "image3.png", "image4.png")
+        imageUriList = listOf(
+            "image1.png".toUri(),
+            "image2.png".toUri(),
+            "image3.png".toUri(),
+            "image4.png".toUri()
+        )
     )
 }
 

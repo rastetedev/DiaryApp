@@ -1,5 +1,7 @@
 package com.androiddevhispano.diaryapp.screens.home.diary
 
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -7,27 +9,35 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -41,6 +51,7 @@ import com.androiddevhispano.diaryapp.ui.theme.Size.doubleExtraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraSmall
 import com.androiddevhispano.diaryapp.ui.theme.Size.tiny
+import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.toInstant
 import io.realm.kotlin.ext.realmListOf
 
@@ -50,8 +61,35 @@ fun DiaryHolder(
     onDiaryClicked: (diaryId: String) -> Unit
 ) {
     val localDensity = LocalDensity.current
+    val context = LocalContext.current
     var componentHeight by remember { mutableStateOf(0.dp) }
     var galleryOpened by rememberSaveable { mutableStateOf(false) }
+    var galleryLoading by rememberSaveable { mutableStateOf(false) }
+    val downloadedImages = remember { mutableStateListOf<Uri>() }
+
+    LaunchedEffect(key1 = galleryOpened) {
+        if (galleryOpened && downloadedImages.isEmpty()) {
+            galleryLoading = true
+            fetchImagesFromFirebase(
+                remoteImageUrlList = diary.images,
+                onImageDownload = { uriDownloaded ->
+                    downloadedImages.add(uriDownloaded)
+                },
+                onBucketDownloadSuccess = {
+                    galleryLoading = false
+                },
+                onBucketDownloadFail = {
+                    galleryLoading = false
+                    galleryOpened = false
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.download_images_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+    }
 
     Row(modifier = Modifier
         .clickable(
@@ -59,7 +97,10 @@ fun DiaryHolder(
             interactionSource = remember {
                 MutableInteractionSource()
             }
-        ) { onDiaryClicked(diary._id.toHexString()) }
+        ) {
+            onDiaryClicked(diary._id.toHexString())
+            galleryOpened = false
+        }
     ) {
         Spacer(modifier = Modifier.width(extraLarge))
         Surface(
@@ -95,7 +136,7 @@ fun DiaryHolder(
                     )
                 }
                 AnimatedVisibility(
-                    visible = galleryOpened,
+                    visible = galleryLoading,
                     enter = fadeIn() + expandVertically(
                         animationSpec = spring(
                             dampingRatio = Spring.DampingRatioMediumBouncy,
@@ -103,7 +144,27 @@ fun DiaryHolder(
                         )
                     )
                 ) {
-
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(extraLarge),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = extraSmall
+                        )
+                    }
+                }
+                AnimatedVisibility(
+                    visible = galleryOpened && !galleryLoading,
+                    enter = fadeIn() + expandVertically(
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        )
+                    )
+                ) {
                     Gallery(
                         modifier = Modifier
                             .padding(
@@ -112,7 +173,7 @@ fun DiaryHolder(
                                 start = extraLarge,
                                 end = extraLarge
                             ),
-                        images = diary.images
+                        imageUriList = downloadedImages
                     )
                 }
             }

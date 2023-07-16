@@ -15,6 +15,8 @@ import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUM
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.createNameWith
+import com.androiddevhispano.diaryapp.utils.extractImagePath
+import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.toInstant
 import com.androiddevhispano.diaryapp.utils.toRealmInstant
 import com.google.firebase.storage.FirebaseStorage
@@ -56,6 +58,30 @@ class WriteViewModel(
                         setDescription(description)
                         setMood(Mood.valueOf(mood))
                         setDate(date.toInstant())
+
+                        if (images.isNotEmpty()) {
+                            uiState = uiState.copy(
+                                isDownloadingImages = true
+                            )
+                        }
+
+                        fetchImagesFromFirebase(
+                            remoteImageUrlList = images,
+                            onImageDownload = { uriDownloaded ->
+                                galleryState.addImage(
+                                    GalleryImage(
+                                        imageUri = uriDownloaded,
+                                        remoteImagePath = uriDownloaded.toString()
+                                            .extractImagePath()
+                                    )
+                                )
+                            },
+                            onBucketDownloadSuccess = {
+                                uiState = uiState.copy(
+                                    isDownloadingImages = false
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -193,5 +219,6 @@ data class WriteUiState(
     val description: String = "",
     val mood: Mood = Mood.Neutral,
     val date: Instant = Instant.now(),
-    val updatedDate: Instant? = null
+    val updatedDate: Instant? = null,
+    val isDownloadingImages: Boolean = false
 )

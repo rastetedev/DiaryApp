@@ -59,6 +59,7 @@ fun WriteContent(
     onDescriptionChanged: (String) -> Unit,
     onImageSelected: (Uri) -> Unit,
     onImageClicked: (GalleryImage) -> Unit,
+    isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit
 ) {
 
@@ -154,7 +155,9 @@ fun WriteContent(
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = doubleExtraLarge),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = doubleExtraLarge),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -165,7 +168,8 @@ fun WriteContent(
                     focusManager.clearFocus()
                 },
                 onImageSelected = onImageSelected,
-                onImageClicked = onImageClicked
+                onImageClicked = onImageClicked,
+                isDownloadingImages = isDownloadingImages
             )
             Spacer(modifier = Modifier.height(extraLarge))
             Button(

@@ -45,6 +45,7 @@ fun WriteScreen(
     onRestoreDateClicked: () -> Unit,
     onTitleChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
+    isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit,
     onImageSelected: (Uri) -> Unit
 ) {
@@ -97,8 +98,9 @@ fun WriteScreen(
                 onDescriptionChanged = { description ->
                     onDescriptionChanged(description)
                 },
-                onImageSelected =onImageSelected,
+                onImageSelected = onImageSelected,
                 onImageClicked = {},
+                isDownloadingImages = isDownloadingImages,
                 onSaveButtonClicked = onSaveButtonClicked
             )
         }

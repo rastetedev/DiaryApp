@@ -5,14 +5,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -31,6 +34,7 @@ fun GalleryUploader(
     onAddClicked: () -> Unit,
     onImageSelected: (Uri) -> Unit,
     onImageClicked: (GalleryImage) -> Unit,
+    isDownloadingImages: Boolean
 ) {
     val multiplePhotoPicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 8),
@@ -63,7 +67,10 @@ fun GalleryUploader(
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(spaceBetween)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(spaceBetween),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             AddImageButton(
                 size = imageSize,
                 shape = imageShape,
@@ -76,27 +83,37 @@ fun GalleryUploader(
                     )
                 }
             )
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(spaceBetween)
-            ) {
-                galleryState.images.take(if (showLastImageOverlay) numberOfSlots - 1 else numberOfSlots)
-                    .forEach { galleryImage ->
-                        GalleryImage(
-                            galleryImage = galleryImage,
-                            imageShape = imageShape,
+            if (isDownloadingImages) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(spaceBetween)
+                ) {
+                    galleryState.images.take(if (showLastImageOverlay) numberOfSlots - 1 else numberOfSlots)
+                        .forEach { galleryImage ->
+                            GalleryImage(
+                                galleryImage = galleryImage,
+                                imageShape = imageShape,
+                                imageSize = imageSize,
+                                onImageClicked = onImageClicked
+                            )
+                        }
+                    if (showLastImageOverlay) {
+                        LastImageOverlay(
                             imageSize = imageSize,
-                            onImageClicked = onImageClicked
+                            imageShape = imageShape,
+                            remainingImages = remainingImages
                         )
                     }
-                if (showLastImageOverlay) {
-                    LastImageOverlay(
-                        imageSize = imageSize,
-                        imageShape = imageShape,
-                        remainingImages = remainingImages
-                    )
                 }
             }
+
         }
     }
 }
