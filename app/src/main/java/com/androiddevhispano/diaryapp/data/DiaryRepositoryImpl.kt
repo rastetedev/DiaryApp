@@ -17,7 +17,7 @@ import org.mongodb.kbson.ObjectId
 import java.time.LocalDate
 import java.time.ZoneId
 
-object MongoDB : MongoRepository {
+object DiaryRepositoryImpl : DiaryRepository {
 
     private val app = App.Companion.create(BuildConfig.MONGO_APP_ID)
     private val user = app.currentUser
@@ -28,7 +28,7 @@ object MongoDB : MongoRepository {
         configureRealm()
     }
 
-    override fun configureRealm() {
+    private fun configureRealm() {
         if (user != null) {
             val config = SyncConfiguration.Builder(user, setOf(Diary::class))
                 .initialSubscriptions { subscription ->

@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import org.mongodb.kbson.ObjectId
 import java.time.LocalDate
 
-interface MongoRepository {
-
-    fun configureRealm()
+interface DiaryRepository {
 
     fun getAllDiaries(): Flow<RequestState<Map<LocalDate, List<Diary>>>>
 

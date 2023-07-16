@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.data.MongoDB
+import com.androiddevhispano.diaryapp.data.DiaryRepositoryImpl
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ class HomeViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 diaries.value = RequestState.Loading
             }
-            MongoDB.getAllDiaries().collect { result ->
+            DiaryRepositoryImpl.getAllDiaries().collect { result ->
                 diaries.value = result
             }
         }

@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.data.MongoDB
+import com.androiddevhispano.diaryapp.data.DiaryRepositoryImpl
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
@@ -51,7 +51,7 @@ class WriteViewModel(
         if (uiState.diaryId != null) {
             viewModelScope.launch {
                 val diaryRequest =
-                    MongoDB.getDiaryById(diaryId = ObjectId.invoke(uiState.diaryId!!))
+                    DiaryRepositoryImpl.getDiaryById(diaryId = ObjectId.invoke(uiState.diaryId!!))
                 if (diaryRequest is RequestState.Success) {
                     with(diaryRequest.data) {
                         setTitle(title)
@@ -132,7 +132,7 @@ class WriteViewModel(
         onError: () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val diarySavedResult = MongoDB.insertDiary(
+            val diarySavedResult = DiaryRepositoryImpl.insertDiary(
                 Diary().apply {
                     title = uiState.title
                     description = uiState.description
@@ -157,7 +157,7 @@ class WriteViewModel(
         onError: () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val diaryUpdatedResult = MongoDB.updateDiary(
+            val diaryUpdatedResult = DiaryRepositoryImpl.updateDiary(
                 Diary().apply {
                     _id = ObjectId.invoke(uiState.diaryId!!)
                     title = uiState.title
@@ -184,7 +184,7 @@ class WriteViewModel(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (uiState.diaryId != null) {
-                val diaryDeletedResult = MongoDB.deleteDiary(ObjectId.invoke(uiState.diaryId!!))
+                val diaryDeletedResult = DiaryRepositoryImpl.deleteDiary(ObjectId.invoke(uiState.diaryId!!))
                 withContext(Dispatchers.Main) {
                     if (diaryDeletedResult is RequestState.Success) onSuccess()
                     else onError()
