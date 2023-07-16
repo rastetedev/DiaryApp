@@ -17,6 +17,7 @@ import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.createNameWith
 import com.androiddevhispano.diaryapp.utils.toInstant
 import com.androiddevhispano.diaryapp.utils.toRealmInstant
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -115,8 +116,12 @@ class WriteViewModel(
                 }
             )
             withContext(Dispatchers.Main) {
-                if (diarySavedResult is RequestState.Success) onSuccess()
-                else onError()
+                if (diarySavedResult is RequestState.Success) {
+                    onSuccess()
+                    withContext(Dispatchers.IO) {
+                        uploadImagesToFirebase()
+                    }
+                } else onError()
             }
         }
     }
@@ -137,8 +142,12 @@ class WriteViewModel(
                 }
             )
             withContext(Dispatchers.Main) {
-                if (diaryUpdatedResult is RequestState.Success) onSuccess()
-                else onError()
+                if (diaryUpdatedResult is RequestState.Success) {
+                    onSuccess()
+                    withContext(Dispatchers.IO) {
+                        uploadImagesToFirebase()
+                    }
+                } else onError()
             }
         }
     }
@@ -166,6 +175,14 @@ class WriteViewModel(
                 remoteImagePath = remoteImagePath
             )
         )
+    }
+
+    private fun uploadImagesToFirebase() {
+        val storage = FirebaseStorage.getInstance().reference
+        galleryState.images.forEach { galleryImage ->
+            val imagePath = storage.child(galleryImage.remoteImagePath)
+            imagePath.putFile(galleryImage.imageUri)
+        }
     }
 }
 
