@@ -1,4 +1,4 @@
-package com.androiddevhispano.diaryapp.data
+package com.androiddevhispano.diaryapp.data.repository
 
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
