@@ -15,14 +15,15 @@ import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.RequestState
-import com.androiddevhispano.diaryapp.utils.createNameWith
+import com.androiddevhispano.diaryapp.utils.createRemoteNameWith
 import com.androiddevhispano.diaryapp.utils.deleteImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.extractImagePath
 import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.toInstant
 import com.androiddevhispano.diaryapp.utils.toRealmInstant
-import com.google.firebase.storage.FirebaseStorage
+import com.androiddevhispano.diaryapp.utils.uploadImagesToFirebase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -145,13 +146,25 @@ class WriteViewModel @Inject constructor(
                     mood = uiState.mood.name
                     date = uiState.updatedDate?.toRealmInstant()
                         ?: run { uiState.date.toRealmInstant() }
+                    images = galleryState.images.map { it.remoteImagePath }.toRealmList()
                 }
             )
             withContext(Dispatchers.Main) {
                 if (diarySavedResult is RequestState.Success) {
                     onSuccess()
                     withContext(Dispatchers.IO) {
-                        uploadImagesToFirebase()
+                        uploadImagesToFirebase(
+                            galleryState = galleryState,
+                            onUploadFail = { galleryImage, sessionUri ->
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    imageRepository.addImageToUpload(
+                                        remoteImagePath = galleryImage.remoteImagePath,
+                                        imageUri = galleryImage.imageUri.toString(),
+                                        sessionUri = sessionUri.toString()
+                                    )
+                                }
+                            }
+                        )
                     }
                 } else onError()
             }
@@ -171,14 +184,25 @@ class WriteViewModel @Inject constructor(
                     mood = uiState.mood.name
                     date = uiState.updatedDate?.toRealmInstant()
                         ?: run { uiState.date.toRealmInstant() }
+                    images = galleryState.images.map { it.remoteImagePath }.toRealmList()
                 }
             )
             withContext(Dispatchers.Main) {
                 if (diaryUpdatedResult is RequestState.Success) {
                     onSuccess()
                     withContext(Dispatchers.IO) {
-                        uploadImagesToFirebase()
-
+                        uploadImagesToFirebase(
+                            galleryState = galleryState,
+                            onUploadFail = { galleryImage, sessionUri ->
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    imageRepository.addImageToUpload(
+                                        remoteImagePath = galleryImage.remoteImagePath,
+                                        imageUri = galleryImage.imageUri.toString(),
+                                        sessionUri = sessionUri.toString()
+                                    )
+                                }
+                            }
+                        )
                     }
                 } else onError()
             }
@@ -206,33 +230,13 @@ class WriteViewModel @Inject constructor(
     }
 
     fun addImage(imageUri: Uri, imageType: String) {
-        val remoteImagePath = imageUri createNameWith imageType
+        val remoteImagePath = imageUri createRemoteNameWith imageType
         galleryState.addImage(
             GalleryImage(
                 imageUri = imageUri,
                 remoteImagePath = remoteImagePath
             )
         )
-    }
-
-    private fun uploadImagesToFirebase() {
-        val storage = FirebaseStorage.getInstance().reference
-        galleryState.images.forEach { galleryImage ->
-            val imagePath = storage.child(galleryImage.remoteImagePath)
-            imagePath.putFile(galleryImage.imageUri)
-                .addOnProgressListener {
-                    val sessionUri = it.uploadSessionUri
-                    if (sessionUri != null) {
-                        viewModelScope.launch(Dispatchers.IO) {
-                            imageRepository.addImageToUpload(
-                                remoteImagePath = galleryImage.remoteImagePath,
-                                imageUri = galleryImage.imageUri.toString(),
-                                sessionUri = sessionUri.toString()
-                            )
-                        }
-                    }
-                }
-        }
     }
 }
 

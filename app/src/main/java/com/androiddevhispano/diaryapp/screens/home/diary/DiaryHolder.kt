@@ -91,8 +91,8 @@ fun DiaryHolder(
                 MutableInteractionSource()
             }
         ) {
-            onDiaryClicked(diary._id.toHexString())
             galleryOpened = false
+            onDiaryClicked(diary._id.toHexString())
         }
     ) {
         Spacer(modifier = Modifier.width(extraLarge))
