@@ -4,9 +4,9 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [Image::class],
+    entities = [ImageToUpload::class],
     version = 1
 )
 abstract class DiaryDatabase : RoomDatabase() {
-    abstract fun imageDao(): ImageDao
+    abstract fun imageDao(): ImageToUploadDao
 }

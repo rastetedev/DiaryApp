@@ -6,13 +6,13 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface ImageDao {
-    @Query("SELECT * FROM image ORDER BY id ASC")
-    suspend fun getAllImages(): List<Image>
+interface ImageToUploadDao {
+    @Query("SELECT * FROM ImageToUpload ORDER BY id ASC")
+    suspend fun getAllImages(): List<ImageToUpload>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImage(image: Image)
+    suspend fun insertImage(imageToUpload: ImageToUpload)
 
-    @Query("DELETE FROM image WHERE id = :imageId")
+    @Query("DELETE FROM ImageToUpload WHERE id = :imageId")
     suspend fun deleteImage(imageId: Int)
 }

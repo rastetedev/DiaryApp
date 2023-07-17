@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androiddevhispano.diaryapp.data.repository.DiaryRepositoryImpl
+import com.androiddevhispano.diaryapp.data.repository.ImageRepository
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
@@ -20,15 +21,19 @@ import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.toInstant
 import com.androiddevhispano.diaryapp.utils.toRealmInstant
 import com.google.firebase.storage.FirebaseStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.mongodb.kbson.ObjectId
 import java.time.Instant
 import java.time.ZonedDateTime
+import javax.inject.Inject
 
-class WriteViewModel(
-    private val savedStateHandle: SavedStateHandle
+@HiltViewModel
+class WriteViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val imageRepository: ImageRepository
 ) : ViewModel() {
 
     var uiState by mutableStateOf(WriteUiState())
@@ -184,7 +189,8 @@ class WriteViewModel(
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             if (uiState.diaryId != null) {
-                val diaryDeletedResult = DiaryRepositoryImpl.deleteDiary(ObjectId.invoke(uiState.diaryId!!))
+                val diaryDeletedResult =
+                    DiaryRepositoryImpl.deleteDiary(ObjectId.invoke(uiState.diaryId!!))
                 withContext(Dispatchers.Main) {
                     if (diaryDeletedResult is RequestState.Success) onSuccess()
                     else onError()
@@ -208,6 +214,18 @@ class WriteViewModel(
         galleryState.images.forEach { galleryImage ->
             val imagePath = storage.child(galleryImage.remoteImagePath)
             imagePath.putFile(galleryImage.imageUri)
+                .addOnProgressListener {
+                    val sessionUri = it.uploadSessionUri
+                    if (sessionUri != null) {
+                        viewModelScope.launch(Dispatchers.IO) {
+                            imageRepository.addImageToUpload(
+                                remoteImagePath = galleryImage.remoteImagePath,
+                                imageUri = galleryImage.imageUri.toString(),
+                                sessionUri = sessionUri.toString()
+                            )
+                        }
+                    }
+                }
         }
     }
 }

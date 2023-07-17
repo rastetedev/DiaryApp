@@ -2,9 +2,12 @@ package com.androiddevhispano.diaryapp.utils
 
 import android.content.Context
 import android.net.Uri
+import androidx.core.net.toUri
+import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storageMetadata
 
 const val FIREBASE_IMAGES_DIRECTORY = "images"
 
@@ -43,6 +46,18 @@ fun fetchImagesFromFirebase(
             }
         }
     }
+}
+
+fun retryUploadImageToFirebase(
+    image: ImageToUpload,
+    onSuccess: () -> Unit
+) {
+    val storage = FirebaseStorage.getInstance().reference
+    storage.child(image.remoteImagePath).putFile(
+        image.imageUri.toUri(),
+        storageMetadata {},
+        image.sessionUri.toUri()
+    ).addOnSuccessListener { onSuccess() }
 }
 
 fun String.extractImagePath(): String {
