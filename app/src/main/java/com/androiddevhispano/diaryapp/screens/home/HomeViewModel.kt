@@ -4,7 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.data.DiaryRepositoryImpl
+import com.androiddevhispano.diaryapp.data.repository.DiaryRepositoryImpl
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
 import kotlinx.coroutines.Dispatchers

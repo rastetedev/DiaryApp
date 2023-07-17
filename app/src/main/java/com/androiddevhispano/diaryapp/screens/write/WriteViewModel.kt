@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.data.DiaryRepositoryImpl
+import com.androiddevhispano.diaryapp.data.repository.DiaryRepositoryImpl
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
