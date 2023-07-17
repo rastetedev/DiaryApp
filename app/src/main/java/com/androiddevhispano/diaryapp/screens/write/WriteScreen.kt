@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.screens.write
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.window.Dialog
+import com.androiddevhispano.diaryapp.R
+import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
+import com.androiddevhispano.diaryapp.components.ZoomableImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.toLocalDate
@@ -47,7 +53,8 @@ fun WriteScreen(
     onDescriptionChanged: (String) -> Unit,
     isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit,
-    onImageSelected: (Uri) -> Unit
+    onImagePickedFromGallery: (Uri) -> Unit,
+    onDeleteGalleryImageClicked: (Uri) -> Unit
 ) {
 
     val dateSheetPickerState = rememberUseCaseState()
@@ -58,6 +65,14 @@ fun WriteScreen(
     }
     var timeInDialog by remember {
         mutableStateOf(uiState.date.toLocalTime())
+    }
+
+    var selectedGalleryImageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
+
+    var showDeleteGalleryImageDialogState by remember {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(key1 = uiState.mood) {
@@ -98,11 +113,46 @@ fun WriteScreen(
                 onDescriptionChanged = { description ->
                     onDescriptionChanged(description)
                 },
-                onImageSelected = onImageSelected,
-                onGalleryImageClicked = {},
+                onImagePickedFromGallery = onImagePickedFromGallery,
+                onGalleryImageClicked = {
+                    selectedGalleryImageUri = it
+                },
                 isDownloadingImages = isDownloadingImages,
                 onSaveButtonClicked = onSaveButtonClicked
             )
+        }
+    )
+
+    AnimatedVisibility(visible = selectedGalleryImageUri != null) {
+        Dialog(
+            onDismissRequest = {
+                selectedGalleryImageUri = null
+            }) {
+
+            if(selectedGalleryImageUri != null){
+                ZoomableImage(
+                    imageUri = selectedGalleryImageUri!!,
+                    onCloseClicked = {
+                        selectedGalleryImageUri = null
+                    },
+                    onDeleteClicked = {
+                        showDeleteGalleryImageDialogState = true
+                    }
+                )
+            }
+        }
+    }
+
+    DisplayAlertDialog(
+        title = stringResource(id = R.string.delete_gallery_image),
+        message = stringResource(id = R.string.confirm_delete_gallery_image),
+        dialogOpened = showDeleteGalleryImageDialogState,
+        onDialogClosed = {
+            showDeleteGalleryImageDialogState = false
+        },
+        onConfirmClicked = {
+            onDeleteGalleryImageClicked(selectedGalleryImageUri!!)
+            selectedGalleryImageUri = null
         }
     )
 

@@ -73,7 +73,7 @@ fun NavGraphBuilder.writeRoute(
             onDescriptionChanged = { description ->
                 viewModel.setDescription(description)
             },
-            onImageSelected = { imageUri ->
+            onImagePickedFromGallery = { imageUri ->
                 viewModel.addImage(
                     imageUri = imageUri,
                     imageType = imageUri.getType(context)
@@ -98,6 +98,9 @@ fun NavGraphBuilder.writeRoute(
                         ).show()
                     }
                 )
+            },
+            onDeleteGalleryImageClicked = {
+
             }
         )
 

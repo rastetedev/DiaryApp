@@ -23,7 +23,7 @@ fun GalleryUploader(
     imageShape: CornerBasedShape = Shapes().medium,
     spaceBetween: Dp = 12.dp,
     onAddClicked: () -> Unit,
-    onImageSelected: (Uri) -> Unit,
+    onImagePickedFromGallery: (Uri) -> Unit,
     onGalleryImageClicked: (Uri) -> Unit,
     isDownloadingImages: Boolean
 ) {
@@ -31,7 +31,7 @@ fun GalleryUploader(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 8),
     ) { images ->
         images.forEach {
-            onImageSelected(it)
+            onImagePickedFromGallery(it)
         }
     }
 

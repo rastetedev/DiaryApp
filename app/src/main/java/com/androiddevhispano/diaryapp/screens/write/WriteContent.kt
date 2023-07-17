@@ -56,7 +56,7 @@ fun WriteContent(
     onTitleChanged: (String) -> Unit,
     description: String,
     onDescriptionChanged: (String) -> Unit,
-    onImageSelected: (Uri) -> Unit,
+    onImagePickedFromGallery: (Uri) -> Unit,
     onGalleryImageClicked: (Uri) -> Unit,
     isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit
@@ -166,7 +166,7 @@ fun WriteContent(
                 onAddClicked = {
                     focusManager.clearFocus()
                 },
-                onImageSelected = onImageSelected,
+                onImagePickedFromGallery = onImagePickedFromGallery,
                 onGalleryImageClicked = onGalleryImageClicked,
                 isDownloadingImages = isDownloadingImages
             )
@@ -179,6 +179,5 @@ fun WriteContent(
                 Text(text = stringResource(id = R.string.save))
             }
         }
-
     }
 }

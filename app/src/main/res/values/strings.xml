@@ -24,5 +24,9 @@
     <string name="delete_diary_success">Diary entry deleted successfully</string>
     <string name="delete_diary_error">There was an error deleting diary</string>
     <string name="download_images_error">Images not uploaded yet. Try again later.</string>
+    <string name="close">Close</string>
+    <string name="delete">Delete</string>
+    <string name="delete_gallery_image">Delete gallery image</string>
+    <string name="confirm_delete_gallery_image">Are you sure you want to delete gallery image?</string>
 
 </resources>
