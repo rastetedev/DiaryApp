@@ -20,7 +20,7 @@ fun GalleryImage(
     imageUri: Uri,
     imageShape: Shape,
     imageSize: Dp,
-    onImageClicked: (imageUri: Uri) -> Unit = {}
+    onGalleryImageClicked: (imageUri: Uri) -> Unit = {}
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -30,7 +30,7 @@ fun GalleryImage(
         modifier = Modifier
             .clip(imageShape)
             .size(imageSize)
-            .clickable { onImageClicked(imageUri) },
+            .clickable { onGalleryImageClicked(imageUri) },
         placeholder = painterResource(R.drawable.logo),
         contentScale = ContentScale.Crop,
         contentDescription = null

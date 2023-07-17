@@ -99,7 +99,7 @@ fun WriteScreen(
                     onDescriptionChanged(description)
                 },
                 onImageSelected = onImageSelected,
-                onImageClicked = {},
+                onGalleryImageClicked = {},
                 isDownloadingImages = isDownloadingImages,
                 onSaveButtonClicked = onSaveButtonClicked
             )

@@ -57,7 +57,7 @@ fun WriteContent(
     description: String,
     onDescriptionChanged: (String) -> Unit,
     onImageSelected: (Uri) -> Unit,
-    onImageClicked: (Uri) -> Unit,
+    onGalleryImageClicked: (Uri) -> Unit,
     isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit
 ) {
@@ -157,20 +157,19 @@ fun WriteContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = doubleExtraLarge),
-            verticalArrangement = Arrangement.Bottom,
+            verticalArrangement = Arrangement.spacedBy(extraLarge),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(extraLarge))
             GalleryUploader(
+                modifier = Modifier.fillMaxWidth(),
                 galleryState = galleryState,
                 onAddClicked = {
                     focusManager.clearFocus()
                 },
                 onImageSelected = onImageSelected,
-                onImageClicked = onImageClicked,
+                onGalleryImageClicked = onGalleryImageClicked,
                 isDownloadingImages = isDownloadingImages
             )
-            Spacer(modifier = Modifier.height(extraLarge))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = buttonEnabledState,
