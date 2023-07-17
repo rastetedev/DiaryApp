@@ -60,6 +60,13 @@ fun retryUploadImageToFirebase(
     ).addOnSuccessListener { onSuccess() }
 }
 
+fun deleteImagesFromFirebase(images: List<String>) {
+    val storage = FirebaseStorage.getInstance().reference
+    images.forEach { remoteImagePath ->
+        storage.child(remoteImagePath).delete()
+    }
+}
+
 fun String.extractImagePath(): String {
     val chunks = split("%2F")
     val imageName = chunks[2].split("?").first()

@@ -16,6 +16,7 @@ import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUM
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.createNameWith
+import com.androiddevhispano.diaryapp.utils.deleteImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.extractImagePath
 import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
 import com.androiddevhispano.diaryapp.utils.toInstant
@@ -177,6 +178,7 @@ class WriteViewModel @Inject constructor(
                     onSuccess()
                     withContext(Dispatchers.IO) {
                         uploadImagesToFirebase()
+
                     }
                 } else onError()
             }
@@ -192,8 +194,12 @@ class WriteViewModel @Inject constructor(
                 val diaryDeletedResult =
                     DiaryRepositoryImpl.deleteDiary(ObjectId.invoke(uiState.diaryId!!))
                 withContext(Dispatchers.Main) {
-                    if (diaryDeletedResult is RequestState.Success) onSuccess()
-                    else onError()
+                    if (diaryDeletedResult is RequestState.Success) {
+                        deleteImagesFromFirebase(
+                            images = galleryState.images.map { it.remoteImagePath }
+                        )
+                        onSuccess()
+                    } else onError()
                 }
             }
         }
