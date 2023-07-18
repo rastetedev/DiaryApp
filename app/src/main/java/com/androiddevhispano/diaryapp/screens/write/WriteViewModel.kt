@@ -128,9 +128,6 @@ class WriteViewModel @Inject constructor(
         onError: () -> Unit
     ) {
         upsertDiary(onSuccess, onError)
-        deleteImagesFromFirebase(
-            galleryState.imagesToBeDeleted.map { it.remoteImagePath }
-        )
     }
 
     private fun upsertDiary(
@@ -155,7 +152,6 @@ class WriteViewModel @Inject constructor(
             )
             withContext(Dispatchers.Main) {
                 if (diarySavedResult is RequestState.Success) {
-                    onSuccess()
                     withContext(Dispatchers.IO) {
                         uploadImagesToFirebase(
                             galleryState = galleryState,
@@ -169,7 +165,13 @@ class WriteViewModel @Inject constructor(
                                 }
                             }
                         )
+                        if(uiState.diaryId != null){
+                            deleteImagesFromFirebase(
+                                galleryState.imagesToBeDeleted.map { it.remoteImagePath }
+                            )
+                        }
                     }
+                    onSuccess()
                 } else onError()
             }
         }
@@ -195,7 +197,10 @@ class WriteViewModel @Inject constructor(
         }
     }
 
-    fun addImage(imageUri: Uri, imageType: String) {
+    fun addImage(
+        imageUri: Uri,
+        imageType: String
+    ) {
         val remoteImagePath = imageUri createRemoteNameWith imageType
         galleryState.addImage(
             GalleryImage(
