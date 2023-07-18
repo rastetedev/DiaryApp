@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
+import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.androiddevhispano.diaryapp.utils.getType
@@ -99,8 +100,13 @@ fun NavGraphBuilder.writeRoute(
                     }
                 )
             },
-            onDeleteGalleryImageClicked = {
-
+            onDeleteGalleryImageClicked = { imageUri ->
+                viewModel.galleryState.removeImage(
+                    GalleryImage(
+                        imageUri = imageUri,
+                        remoteImagePath = imageUri.toString()
+                    )
+                )
             }
         )
 

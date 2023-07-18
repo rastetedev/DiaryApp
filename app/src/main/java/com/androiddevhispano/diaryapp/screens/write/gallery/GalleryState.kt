@@ -12,7 +12,7 @@ class GalleryState {
     }
 
     fun removeImage(galleryImage: GalleryImage) {
-        images.remove(galleryImage)
+        images.removeIf { galleryImage.imageUri == it.imageUri }
         imagesToBeDeleted.add(galleryImage)
     }
 }

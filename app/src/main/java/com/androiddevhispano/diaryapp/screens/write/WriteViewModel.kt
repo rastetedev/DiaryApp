@@ -127,14 +127,13 @@ class WriteViewModel @Inject constructor(
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
-        if (uiState.diaryId != null) {
-            updateDiary(onSuccess, onError)
-        } else {
-            insertDiary(onSuccess, onError)
-        }
+        upsertDiary(onSuccess, onError)
+        deleteImagesFromFirebase(
+            galleryState.imagesToBeDeleted.map { it.remoteImagePath }
+        )
     }
 
-    private fun insertDiary(
+    private fun upsertDiary(
         onSuccess: () -> Unit,
         onError: () -> Unit
     ) {
@@ -147,48 +146,15 @@ class WriteViewModel @Inject constructor(
                     date = uiState.updatedDate?.toRealmInstant()
                         ?: run { uiState.date.toRealmInstant() }
                     images = galleryState.images.map { it.remoteImagePath }.toRealmList()
+
+                    if (uiState.diaryId != null) {
+                        _id = ObjectId.invoke(uiState.diaryId!!)
+                    }
                 }
+
             )
             withContext(Dispatchers.Main) {
                 if (diarySavedResult is RequestState.Success) {
-                    onSuccess()
-                    withContext(Dispatchers.IO) {
-                        uploadImagesToFirebase(
-                            galleryState = galleryState,
-                            onUploadFail = { galleryImage, sessionUri ->
-                                viewModelScope.launch(Dispatchers.IO) {
-                                    imageRepository.addImageToUpload(
-                                        remoteImagePath = galleryImage.remoteImagePath,
-                                        imageUri = galleryImage.imageUri.toString(),
-                                        sessionUri = sessionUri.toString()
-                                    )
-                                }
-                            }
-                        )
-                    }
-                } else onError()
-            }
-        }
-    }
-
-    private fun updateDiary(
-        onSuccess: () -> Unit,
-        onError: () -> Unit
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val diaryUpdatedResult = DiaryRepositoryImpl.updateDiary(
-                Diary().apply {
-                    _id = ObjectId.invoke(uiState.diaryId!!)
-                    title = uiState.title
-                    description = uiState.description
-                    mood = uiState.mood.name
-                    date = uiState.updatedDate?.toRealmInstant()
-                        ?: run { uiState.date.toRealmInstant() }
-                    images = galleryState.images.map { it.remoteImagePath }.toRealmList()
-                }
-            )
-            withContext(Dispatchers.Main) {
-                if (diaryUpdatedResult is RequestState.Success) {
                     onSuccess()
                     withContext(Dispatchers.IO) {
                         uploadImagesToFirebase(
