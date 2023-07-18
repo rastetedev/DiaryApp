@@ -14,9 +14,12 @@ import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.deleteAllImagesForAllDiaries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,24 +28,53 @@ class HomeViewModel @Inject constructor(
     private val imageRepository: ImageRepository
 ) : ViewModel() {
 
+    private lateinit var allDiariesObserverJob: Job
+    private lateinit var filteredDiariesObserverJob: Job
+
     var diaries: MutableState<RequestState<Map<LocalDate, List<Diary>>>> =
         mutableStateOf(RequestState.Idle)
+
+    var isSpecificDateSelected by mutableStateOf(false)
+        private set
 
     private var networkStatus by mutableStateOf(ConnectivityObserver.Status.UNAVAILABLE)
 
     init {
-        observeAllDiaries()
+        getDiaries(null)
         observeNetwork()
     }
 
+    fun getDiaries(specificDateToShowDiaries: ZonedDateTime? = null) {
+        isSpecificDateSelected = specificDateToShowDiaries != null
+        diaries.value = RequestState.Loading
+        if (specificDateToShowDiaries != null) {
+            observeFilteredDiaries(specificDateToShowDiaries)
+        } else {
+            observeAllDiaries()
+        }
+    }
+
     private fun observeAllDiaries() {
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                diaries.value = RequestState.Loading
+        allDiariesObserverJob = viewModelScope.launch(Dispatchers.IO) {
+            if (::filteredDiariesObserverJob.isInitialized) {
+                filteredDiariesObserverJob.cancelAndJoin()
             }
-            DiaryRepositoryImpl.getAllDiaries().collect { result ->
-                diaries.value = result
+            DiaryRepositoryImpl.getAllDiaries()
+                .collect { result ->
+                    diaries.value = result
+                }
+        }
+    }
+
+    private fun observeFilteredDiaries(specificDateToShowDiaries: ZonedDateTime) {
+        filteredDiariesObserverJob = viewModelScope.launch(Dispatchers.IO) {
+            if (::allDiariesObserverJob.isInitialized) {
+                allDiariesObserverJob.cancelAndJoin()
             }
+            DiaryRepositoryImpl.getFilteredDiariesByDate(specificDateToShowDiaries)
+                .collect { result ->
+                    diaries.value = result
+                }
         }
     }
 

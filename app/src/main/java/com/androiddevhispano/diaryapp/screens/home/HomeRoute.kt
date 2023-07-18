@@ -25,7 +25,6 @@ import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: (diaryId: String?) -> Unit,
     navigateToAuthentication: () -> Unit,
@@ -42,7 +41,6 @@ fun NavGraphBuilder.homeRoute(
         var deleteAllDialogOpenedState by remember {
             mutableStateOf(false)
         }
-
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
 
@@ -55,6 +53,7 @@ fun NavGraphBuilder.homeRoute(
         HomeScreen(
             diariesRequestState = diariesRequestState,
             drawerState = drawerState,
+            diariesFilterByDate =  viewModel.isSpecificDateSelected,
             navigateToWrite = { diaryId ->
                 navigateToWrite(diaryId)
             },
@@ -62,6 +61,12 @@ fun NavGraphBuilder.homeRoute(
                 coroutineScope.launch {
                     drawerState.open()
                 }
+            },
+            onResetFilterByDateClicked = {
+                viewModel.getDiaries()
+            },
+            onSpecificDateClicked = { specificDateToShowDiaries ->
+                viewModel.getDiaries(specificDateToShowDiaries)
             },
             onDeleteAllClicked = {
                 deleteAllDialogOpenedState = true

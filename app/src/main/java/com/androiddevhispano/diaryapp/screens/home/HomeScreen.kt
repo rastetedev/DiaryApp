@@ -24,19 +24,30 @@ import androidx.compose.ui.text.font.FontWeight
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
+import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
+import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
+import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     diariesRequestState: RequestState<Map<LocalDate, List<Diary>>>,
     drawerState: DrawerState,
+    diariesFilterByDate: Boolean,
     navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
+    onResetFilterByDateClicked: () -> Unit,
+    onSpecificDateClicked: (ZonedDateTime) -> Unit,
     onDeleteAllClicked: () -> Unit,
     onSignOutClicked: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    val dateSheetPickerState = rememberUseCaseState()
 
     NavigationDrawer(
         drawerState = drawerState,
@@ -47,7 +58,13 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     scrollBehavior = scrollBehavior,
+                    diariesAreNotEmpty = (diariesRequestState is RequestState.Success && diariesRequestState.data.isNotEmpty()),
                     onMenuClicked = onMenuClicked,
+                    diariesFilterByDate = diariesFilterByDate,
+                    onSpecificDateClicked = {
+                        dateSheetPickerState.show()
+                    },
+                    onResetFilterByDateClicked = onResetFilterByDateClicked,
                     onDeleteAllClicked = onDeleteAllClicked
                 )
             },
@@ -72,7 +89,8 @@ fun HomeScreen(
                     )
                 }
 
-                diariesRequestState is RequestState.Error -> {
+                diariesRequestState is RequestState.Error ||
+                        diariesRequestState is RequestState.Success -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -86,6 +104,7 @@ fun HomeScreen(
                     }
                 }
 
+
                 else -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -97,4 +116,21 @@ fun HomeScreen(
             }
         }
     }
+
+    CalendarDialog(
+        state = dateSheetPickerState,
+        selection = CalendarSelection.Date { date: LocalDate ->
+            onSpecificDateClicked(
+                ZonedDateTime.of(
+                    date,
+                    LocalTime.now(),
+                    ZoneId.systemDefault()
+                )
+            )
+        },
+        config = CalendarConfig(
+            monthSelection = true,
+            yearSelection = true
+        ),
+    )
 }

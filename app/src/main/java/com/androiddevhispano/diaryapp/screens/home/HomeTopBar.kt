@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.screens.home
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
@@ -18,7 +19,11 @@ import com.androiddevhispano.diaryapp.R
 @Composable
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
+    diariesAreNotEmpty: Boolean,
     onMenuClicked: () -> Unit,
+    diariesFilterByDate: Boolean,
+    onSpecificDateClicked: () -> Unit,
+    onResetFilterByDateClicked: () -> Unit,
     onDeleteAllClicked: () -> Unit
 ) {
     TopAppBar(
@@ -32,11 +37,19 @@ fun HomeTopBar(
             Text(text = stringResource(id = R.string.diary))
         },
         actions = {
-            IconButton(onClick = onMenuClicked) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-            }
-            IconButton(onClick = onDeleteAllClicked) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+            if(diariesAreNotEmpty){
+                if (diariesFilterByDate) {
+                    IconButton(onClick = onResetFilterByDateClicked) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                    }
+                } else {
+                    IconButton(onClick = onSpecificDateClicked) {
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+                    }
+                }
+                IconButton(onClick = onDeleteAllClicked) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                }
             }
         }
     )
