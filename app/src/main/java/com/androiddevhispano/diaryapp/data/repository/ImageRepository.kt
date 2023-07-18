@@ -1,5 +1,6 @@
 package com.androiddevhispano.diaryapp.data.repository
 
+import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDelete
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
 
 interface ImageRepository {
@@ -9,4 +10,10 @@ interface ImageRepository {
     suspend fun getImagesToUpload() : List<ImageToUpload>
 
     suspend fun cleanupImageToUpload(imageId: Int)
+
+    suspend fun addImageToDelete(remoteImagePath: String)
+
+    suspend fun getImagesToDelete() : List<ImageToDelete>
+
+    suspend fun cleanupImageToDelete(imageId: Int)
 }

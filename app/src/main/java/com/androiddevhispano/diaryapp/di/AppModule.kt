@@ -3,6 +3,7 @@ package com.androiddevhispano.diaryapp.di
 import android.content.Context
 import androidx.room.Room
 import com.androiddevhispano.diaryapp.data.localdatabase.DiaryDatabase
+import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDeleteDao
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
 import com.androiddevhispano.diaryapp.data.repository.ImageRepository
 import com.androiddevhispano.diaryapp.data.repository.ImageRepositoryImpl
@@ -31,11 +32,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideImageDao(database: DiaryDatabase) = database.imageDao()
+    fun provideImageToUploadDao(database: DiaryDatabase) = database.imageToUploadDao()
 
     @Provides
     @Singleton
-    fun provideImageRepository(imageToUploadDao: ImageToUploadDao) : ImageRepository {
-        return ImageRepositoryImpl(imageToUploadDao)
+    fun provideImageToDeleteDao(database: DiaryDatabase) = database.imageToDeleteDao()
+
+    @Provides
+    @Singleton
+    fun provideImageRepository(
+        imageToUploadDao: ImageToUploadDao,
+        imageToDeleteDao: ImageToDeleteDao
+    ): ImageRepository {
+        return ImageRepositoryImpl(imageToUploadDao, imageToDeleteDao)
     }
 }

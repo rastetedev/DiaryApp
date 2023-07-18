@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,8 +55,8 @@ fun DiaryHolder(
     val localDensity = LocalDensity.current
     val context = LocalContext.current
     var componentHeight by remember { mutableStateOf(0.dp) }
-    var galleryOpened by rememberSaveable { mutableStateOf(false) }
-    var galleryLoading by rememberSaveable { mutableStateOf(false) }
+    var galleryOpened by remember { mutableStateOf(false) }
+    var galleryLoading by remember { mutableStateOf(false) }
     val downloadedImages = remember { mutableStateListOf<Uri>() }
 
     LaunchedEffect(key1 = galleryOpened) {
@@ -91,7 +90,6 @@ fun DiaryHolder(
                 MutableInteractionSource()
             }
         ) {
-            galleryOpened = false
             onDiaryClicked(diary._id.toHexString())
         }
     ) {
@@ -169,9 +167,12 @@ fun ShowGalleryButton(
 @Composable
 @Preview
 fun DiaryHolderPreview() {
-    DiaryHolder(diary = Diary().apply {
-        title = "This a diary title to test"
-        description = "This is a diary description to test how looks on the app"
-        images = realmListOf("image1.png", "image2.png", "image3.png")
-    }, onDiaryClicked = {})
+    DiaryHolder(
+        diary = Diary().apply {
+            title = "This a diary title to test"
+            description = "This is a diary description to test how looks on the app"
+            images = realmListOf("image1.png", "image2.png", "image3.png")
+        },
+        onDiaryClicked = {}
+    )
 }

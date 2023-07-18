@@ -1,13 +1,22 @@
 package com.androiddevhispano.diaryapp.data.repository
 
+import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDelete
+import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDeleteDao
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
 import javax.inject.Inject
 
 
-class ImageRepositoryImpl @Inject constructor(private val imageToUploadDao: ImageToUploadDao) : ImageRepository {
+class ImageRepositoryImpl @Inject constructor(
+    private val imageToUploadDao: ImageToUploadDao,
+    private val imageToDeleteDao: ImageToDeleteDao
+) : ImageRepository {
 
-    override suspend fun addImageToUpload(remoteImagePath: String, imageUri: String, sessionUri: String) {
+    override suspend fun addImageToUpload(
+        remoteImagePath: String,
+        imageUri: String,
+        sessionUri: String
+    ) {
         imageToUploadDao.insertImage(
             ImageToUpload(
                 remoteImagePath = remoteImagePath,
@@ -23,5 +32,17 @@ class ImageRepositoryImpl @Inject constructor(private val imageToUploadDao: Imag
 
     override suspend fun cleanupImageToUpload(imageId: Int) {
         imageToUploadDao.deleteImage(imageId)
+    }
+
+    override suspend fun addImageToDelete(remoteImagePath: String) {
+        imageToDeleteDao.insertImage(ImageToDelete(remoteImagePath = remoteImagePath))
+    }
+
+    override suspend fun getImagesToDelete(): List<ImageToDelete> {
+        return imageToDeleteDao.getAllImages()
+    }
+
+    override suspend fun cleanupImageToDelete(imageId: Int) {
+        imageToDeleteDao.deleteImage(imageId)
     }
 }

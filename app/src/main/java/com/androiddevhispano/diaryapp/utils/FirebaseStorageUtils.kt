@@ -44,14 +44,33 @@ fun retryUploadImageToFirebase(
     ).addOnSuccessListener { onSuccess() }
 }
 
-fun deleteImagesFromFirebase(images: List<String>) {
+fun deleteImagesFromFirebase(
+    remoteImagePathList: List<String>,
+    onDeleteFail: (remoteImagePath: String) -> Unit
+) {
     val storage = FirebaseStorage.getInstance().reference
-    images.forEach { remoteImagePath ->
+    remoteImagePathList.forEach { remoteImagePath ->
         storage.child(remoteImagePath).delete()
+            .addOnFailureListener {
+                onDeleteFail(remoteImagePath)
+            }
     }
 }
 
-fun uploadImagesToFirebase(galleryState: GalleryState, onUploadFail: (GalleryImage, Uri?) -> Unit) {
+fun retryDeletingImageFromFirebase(
+    remoteImagePath: String,
+    onSuccess: () -> Unit
+) {
+    val storage = FirebaseStorage.getInstance().reference
+    storage.child(remoteImagePath).delete()
+        .addOnSuccessListener { onSuccess() }
+}
+
+
+fun uploadImagesToFirebase(
+    galleryState: GalleryState,
+    onUploadFail: (GalleryImage, Uri?) -> Unit
+) {
     val storage = FirebaseStorage.getInstance().reference
     galleryState.images.forEach { galleryImage ->
         val imagePath = storage.child(galleryImage.remoteImagePath)

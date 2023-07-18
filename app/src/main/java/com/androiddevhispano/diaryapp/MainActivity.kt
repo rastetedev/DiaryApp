@@ -11,6 +11,7 @@ import com.androiddevhispano.diaryapp.data.repository.ImageRepository
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.androiddevhispano.diaryapp.navigation.SetupNavGraph
 import com.androiddevhispano.diaryapp.ui.theme.DiaryAppTheme
+import com.androiddevhispano.diaryapp.utils.retryDeletingImageFromFirebase
 import com.androiddevhispano.diaryapp.utils.retryUploadImageToFirebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
@@ -49,14 +50,18 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-        cleanupImages(
+        retryUploadImagesToFirebase(
+            scope = lifecycleScope,
+            imageRepository = imageRepository
+        )
+        retryDeleteImagesRemovedFromFirebase(
             scope = lifecycleScope,
             imageRepository = imageRepository
         )
     }
 }
 
-private fun cleanupImages(
+private fun retryUploadImagesToFirebase(
     scope: CoroutineScope,
     imageRepository: ImageRepository
 ) {
@@ -67,6 +72,25 @@ private fun cleanupImages(
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         imageRepository.cleanupImageToUpload(it.id)
+                    }
+                }
+            )
+        }
+    }
+}
+
+private fun retryDeleteImagesRemovedFromFirebase(
+    scope: CoroutineScope,
+    imageRepository: ImageRepository
+) {
+    scope.launch(Dispatchers.IO) {
+        val imagesToDelete = imageRepository.getImagesToDelete()
+        imagesToDelete.forEach { image ->
+            retryDeletingImageFromFirebase(
+                remoteImagePath = image.remoteImagePath,
+                onSuccess = {
+                    scope.launch(Dispatchers.IO) {
+                        imageRepository.cleanupImageToDelete(image.id)
                     }
                 }
             )

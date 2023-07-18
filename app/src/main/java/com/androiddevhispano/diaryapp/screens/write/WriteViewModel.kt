@@ -165,9 +165,14 @@ class WriteViewModel @Inject constructor(
                                 }
                             }
                         )
-                        if(uiState.diaryId != null){
+                        if (uiState.diaryId != null) {
                             deleteImagesFromFirebase(
-                                galleryState.imagesToBeDeleted.map { it.remoteImagePath }
+                                remoteImagePathList = galleryState.imagesToBeDeleted.map { it.remoteImagePath },
+                                onDeleteFail = { imageRemotePath ->
+                                    viewModelScope.launch(Dispatchers.IO) {
+                                        imageRepository.addImageToDelete(imageRemotePath)
+                                    }
+                                }
                             )
                         }
                     }
@@ -188,7 +193,12 @@ class WriteViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     if (diaryDeletedResult is RequestState.Success) {
                         deleteImagesFromFirebase(
-                            images = galleryState.images.map { it.remoteImagePath }
+                            remoteImagePathList = galleryState.images.map { it.remoteImagePath },
+                            onDeleteFail = { remoteImagePath ->
+                                viewModelScope.launch(Dispatchers.IO) {
+                                    imageRepository.addImageToDelete(remoteImagePath)
+                                }
+                            }
                         )
                         onSuccess()
                     } else onError()
