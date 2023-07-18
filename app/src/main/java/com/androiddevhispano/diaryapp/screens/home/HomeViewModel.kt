@@ -61,7 +61,9 @@ class HomeViewModel @Inject constructor(
             }
             DiaryRepositoryImpl.getAllDiaries()
                 .collect { result ->
-                    diaries.value = result
+                    withContext(Dispatchers.Main){
+                        diaries.value = result
+                    }
                 }
         }
     }
@@ -73,7 +75,9 @@ class HomeViewModel @Inject constructor(
             }
             DiaryRepositoryImpl.getFilteredDiariesByDate(specificDateToShowDiaries)
                 .collect { result ->
-                    diaries.value = result
+                    withContext(Dispatchers.Main){
+                        diaries.value = result
+                    }
                 }
         }
     }

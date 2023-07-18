@@ -22,9 +22,9 @@ fun AuthenticationScreen(
     loadingState: Boolean,
     authenticatedState: Boolean,
     oneTapSignInState: OneTapSignInState,
-    onButtonClicked: () -> Unit,
-    onGoogleTokenIdReceived: (String) -> Unit,
-    onSignInDialogDismissed: (String) -> Unit,
+    onSignInClicked: () -> Unit,
+    onGoogleTokenIdReceived: (tokenId: String) -> Unit,
+    onSignInDialogDismissed: (message: String) -> Unit,
     navigateToHome: () -> Unit
 ) {
 
@@ -42,7 +42,7 @@ fun AuthenticationScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     loadingState = loadingState,
-                    onButtonClicked = onButtonClicked
+                    onButtonClicked = onSignInClicked
                 )
             }
         })

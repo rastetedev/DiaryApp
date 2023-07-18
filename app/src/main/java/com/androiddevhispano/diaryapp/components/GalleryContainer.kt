@@ -117,8 +117,8 @@ fun GalleryContainer(
                     ).forEach { imageUri ->
                         GalleryImage(
                             imageUri = imageUri,
-                            imageSize = imageSize,
-                            imageShape = imageShape,
+                            size = imageSize,
+                            shape = imageShape,
                             onGalleryImageClicked = onGalleryImageClicked
                         )
                     }

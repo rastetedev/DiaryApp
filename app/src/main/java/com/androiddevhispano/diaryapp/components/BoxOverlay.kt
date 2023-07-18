@@ -61,5 +61,9 @@ fun LastImageOverlay(
 @Preview
 @Composable
 fun LastImageOverlayPreview() {
-    LastImageOverlay(imageSize = 40.dp, imageShape = Shapes().small, remainingImages = 2)
+    LastImageOverlay(
+        imageSize = 40.dp,
+        imageShape = Shapes().small,
+        remainingImages = 2
+    )
 }

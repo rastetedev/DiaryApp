@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.screens.write
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,8 @@ fun NavGraphBuilder.writeRoute(
 ) {
     composable(
         route = Screen.Write.route,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
         arguments = listOf(
             navArgument(name = Screen.DIARY_ID_ARGUMENT) {
                 type = NavType.StringType
@@ -111,9 +114,9 @@ fun NavGraphBuilder.writeRoute(
         )
 
         DisplayAlertDialog(
+            showDialog = deleteDiaryDialogOpenedState,
             title = stringResource(id = R.string.delete_diary),
             message = stringResource(id = R.string.confirm_delete_diary),
-            dialogOpened = deleteDiaryDialogOpenedState,
             onDialogClosed = {
                 deleteDiaryDialogOpenedState = false
             },

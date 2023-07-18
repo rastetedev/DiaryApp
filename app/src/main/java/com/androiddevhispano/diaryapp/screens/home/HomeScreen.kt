@@ -42,7 +42,7 @@ fun HomeScreen(
     navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
     onResetFilterByDateClicked: () -> Unit,
-    onSpecificDateClicked: (ZonedDateTime) -> Unit,
+    onSpecificDateClicked: (specificDate: ZonedDateTime) -> Unit,
     onDeleteAllClicked: () -> Unit,
     onSignOutClicked: () -> Unit
 ) {

@@ -17,7 +17,7 @@ import java.time.LocalDate
 fun HomeContent(
     modifier: Modifier = Modifier,
     diaryNotes: Map<LocalDate, List<Diary>>,
-    onDiaryClicked: (String) -> Unit
+    onDiaryClicked: (diaryId: String) -> Unit
 ) {
 
     LazyColumn(

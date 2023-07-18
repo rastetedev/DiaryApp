@@ -144,9 +144,9 @@ fun WriteScreen(
     }
 
     DisplayAlertDialog(
+        showDialog = showDeleteGalleryImageDialogState,
         title = stringResource(id = R.string.delete_gallery_image),
         message = stringResource(id = R.string.confirm_delete_gallery_image),
-        dialogOpened = showDeleteGalleryImageDialogState,
         onDialogClosed = {
             showDeleteGalleryImageDialogState = false
         },

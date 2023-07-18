@@ -18,8 +18,8 @@ import com.androiddevhispano.diaryapp.R
 @Composable
 fun GalleryImage(
     imageUri: Uri,
-    imageShape: Shape,
-    imageSize: Dp,
+    shape: Shape,
+    size: Dp,
     onGalleryImageClicked: (imageUri: Uri) -> Unit = {}
 ) {
     AsyncImage(
@@ -28,8 +28,8 @@ fun GalleryImage(
             .crossfade(true)
             .build(),
         modifier = Modifier
-            .clip(imageShape)
-            .size(imageSize)
+            .clip(shape)
+            .size(size)
             .clickable { onGalleryImageClicked(imageUri) },
         placeholder = painterResource(R.drawable.logo),
         contentScale = ContentScale.Crop,

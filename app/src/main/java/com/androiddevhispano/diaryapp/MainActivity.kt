@@ -71,7 +71,7 @@ private fun retryUploadImagesToFirebase(
                 image = it,
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
-                        imageRepository.cleanupImageToUpload(it.id)
+                        imageRepository.removeImageToUpload(it.id)
                     }
                 }
             )
@@ -90,7 +90,7 @@ private fun retryDeleteImagesRemovedFromFirebase(
                 remoteImagePath = image.remoteImagePath,
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
-                        imageRepository.cleanupImageToDelete(image.id)
+                        imageRepository.removeImageToDelete(image.id)
                     }
                 }
             )

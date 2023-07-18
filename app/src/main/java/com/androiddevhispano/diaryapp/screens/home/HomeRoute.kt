@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.screens.home
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
@@ -25,12 +26,37 @@ import io.realm.kotlin.mongodb.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 fun NavGraphBuilder.homeRoute(
     navigateToWrite: (diaryId: String?) -> Unit,
     navigateToAuthentication: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
-    composable(route = Screen.Home.route) {
+    composable(
+        route = Screen.Home.route,
+        enterTransition = {
+            when (initialState.destination.route) {
+                Screen.Authentication.route -> {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                }
+
+                else -> {
+                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                }
+            }
+        },
+        exitTransition = {
+            when (targetState.destination.route) {
+                Screen.Authentication.route -> {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                }
+
+                else -> {
+                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                }
+            }
+        }
+    ) {
         val viewModel: HomeViewModel = hiltViewModel()
 
         val diariesRequestState by viewModel.diaries
@@ -53,7 +79,7 @@ fun NavGraphBuilder.homeRoute(
         HomeScreen(
             diariesRequestState = diariesRequestState,
             drawerState = drawerState,
-            diariesFilterByDate =  viewModel.isSpecificDateSelected,
+            diariesFilterByDate = viewModel.isSpecificDateSelected,
             navigateToWrite = { diaryId ->
                 navigateToWrite(diaryId)
             },
@@ -77,9 +103,9 @@ fun NavGraphBuilder.homeRoute(
         )
 
         DisplayAlertDialog(
+            showDialog = signOutDialogOpenedState,
             title = stringResource(id = R.string.sign_out),
             message = stringResource(id = R.string.confirm_sign_out),
-            dialogOpened = signOutDialogOpenedState,
             onDialogClosed = {
                 signOutDialogOpenedState = false
             },
@@ -95,9 +121,9 @@ fun NavGraphBuilder.homeRoute(
         )
 
         DisplayAlertDialog(
+            showDialog = deleteAllDialogOpenedState,
             title = stringResource(id = R.string.delete_all_diaries),
             message = stringResource(id = R.string.confirm_delete_all_diaries),
-            dialogOpened = deleteAllDialogOpenedState,
             onDialogClosed = {
                 deleteAllDialogOpenedState = false
             },

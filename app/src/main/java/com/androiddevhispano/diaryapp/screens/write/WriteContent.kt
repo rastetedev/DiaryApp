@@ -53,11 +53,11 @@ fun WriteContent(
     galleryState: GalleryState,
     buttonEnabledState: Boolean,
     title: String,
-    onTitleChanged: (String) -> Unit,
+    onTitleChanged: (title: String) -> Unit,
     description: String,
-    onDescriptionChanged: (String) -> Unit,
-    onImagePickedFromGallery: (Uri) -> Unit,
-    onGalleryImageClicked: (Uri) -> Unit,
+    onDescriptionChanged: (description: String) -> Unit,
+    onImagePickedFromGallery: (imageUri: Uri) -> Unit,
+    onGalleryImageClicked: (imageUri: Uri) -> Unit,
     isDownloadingImages: Boolean,
     onSaveButtonClicked: () -> Unit
 ) {

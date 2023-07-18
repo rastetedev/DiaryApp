@@ -1,4 +1,4 @@
-package com.androiddevhispano.diaryapp.components
+package com.androiddevhispano.diaryapp.screens.authentication
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing

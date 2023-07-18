@@ -12,13 +12,13 @@ import com.androiddevhispano.diaryapp.R
 
 @Composable
 fun DisplayAlertDialog(
+    showDialog: Boolean,
     title: String,
     message: String,
-    dialogOpened: Boolean,
-    onDialogClosed: () -> Unit,
     onConfirmClicked: () -> Unit,
+    onDialogClosed: () -> Unit,
 ) {
-    if (dialogOpened) {
+    if (showDialog) {
         AlertDialog(
             title = {
                 Text(

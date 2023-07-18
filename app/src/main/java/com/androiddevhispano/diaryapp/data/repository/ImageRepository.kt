@@ -9,11 +9,11 @@ interface ImageRepository {
 
     suspend fun getImagesToUpload() : List<ImageToUpload>
 
-    suspend fun cleanupImageToUpload(imageId: Int)
+    suspend fun removeImageToUpload(imageId: Int)
 
     suspend fun addImageToDelete(remoteImagePath: String)
 
     suspend fun getImagesToDelete() : List<ImageToDelete>
 
-    suspend fun cleanupImageToDelete(imageId: Int)
+    suspend fun removeImageToDelete(imageId: Int)
 }

@@ -23,8 +23,8 @@ fun GalleryUploader(
     imageShape: CornerBasedShape = Shapes().medium,
     spaceBetween: Dp = 12.dp,
     onAddClicked: () -> Unit,
-    onImagePickedFromGallery: (Uri) -> Unit,
-    onGalleryImageClicked: (Uri) -> Unit,
+    onImagePickedFromGallery: (imageUri: Uri) -> Unit,
+    onGalleryImageClicked: (imageUri: Uri) -> Unit,
     isDownloadingImages: Boolean
 ) {
     val multiplePhotoPicker = rememberLauncherForActivityResult(

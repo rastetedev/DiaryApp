@@ -1,5 +1,6 @@
 package com.androiddevhispano.diaryapp.screens.authentication
 
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
@@ -16,7 +17,11 @@ fun NavGraphBuilder.authenticationRoute(
     navigateToHome: () -> Unit,
     onDataLoaded: () -> Unit
 ) {
-    composable(route = Screen.Authentication.route) {
+    composable(
+        route = Screen.Authentication.route,
+        enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
+        exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) }
+    ) {
         val viewModel: AuthenticationViewModel = viewModel()
         val loadingState by viewModel.loadingState
 
@@ -34,7 +39,7 @@ fun NavGraphBuilder.authenticationRoute(
             loadingState = loadingState,
             authenticatedState = viewModel.authenticatedState,
             oneTapSignInState = oneTapSignInState,
-            onButtonClicked = {
+            onSignInClicked = {
                 viewModel.setLoading(true)
                 oneTapSignInState.open()
             },

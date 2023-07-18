@@ -6,7 +6,6 @@ import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
 import javax.inject.Inject
 
-
 class ImageRepositoryImpl @Inject constructor(
     private val imageToUploadDao: ImageToUploadDao,
     private val imageToDeleteDao: ImageToDeleteDao
@@ -30,7 +29,7 @@ class ImageRepositoryImpl @Inject constructor(
         return imageToUploadDao.getAllImages()
     }
 
-    override suspend fun cleanupImageToUpload(imageId: Int) {
+    override suspend fun removeImageToUpload(imageId: Int) {
         imageToUploadDao.deleteImage(imageId)
     }
 
@@ -42,7 +41,7 @@ class ImageRepositoryImpl @Inject constructor(
         return imageToDeleteDao.getAllImages()
     }
 
-    override suspend fun cleanupImageToDelete(imageId: Int) {
+    override suspend fun removeImageToDelete(imageId: Int) {
         imageToDeleteDao.deleteImage(imageId)
     }
 }
