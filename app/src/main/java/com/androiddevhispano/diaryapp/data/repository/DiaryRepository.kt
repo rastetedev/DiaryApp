@@ -17,4 +17,6 @@ interface DiaryRepository {
     suspend fun updateDiary(diary: Diary) : RequestState<Diary>
 
     suspend fun deleteDiary(diaryId: ObjectId) : RequestState<Unit>
+
+    suspend fun deleteAllDiaries() : RequestState<Unit>
 }

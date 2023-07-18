@@ -5,6 +5,7 @@ import androidx.core.net.toUri
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storageMetadata
 
@@ -82,4 +83,26 @@ fun uploadImagesToFirebase(
                 }
             }
     }
+}
+
+fun deleteAllImagesForAllDiaries(
+    onDeleteImageFail: (imageRemotePath: String) -> Unit,
+    onError: () -> Unit
+) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid
+    val imagesDirectory = "$FIREBASE_IMAGES_DIRECTORY/$userId"
+    val storage = FirebaseStorage.getInstance().reference
+    storage.child(imagesDirectory).listAll()
+        .addOnSuccessListener {
+            it.items.forEach { ref ->
+                val imageRemotePath = "$FIREBASE_IMAGES_DIRECTORY/$userId/${ref.name}"
+                storage.child(imageRemotePath).delete()
+                    .addOnFailureListener {
+                        onDeleteImageFail(imageRemotePath)
+                    }
+            }
+        }
+        .addOnFailureListener {
+            onError()
+        }
 }

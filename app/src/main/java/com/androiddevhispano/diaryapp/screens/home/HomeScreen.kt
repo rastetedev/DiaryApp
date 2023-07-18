@@ -33,6 +33,7 @@ fun HomeScreen(
     drawerState: DrawerState,
     navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
+    onDeleteAllClicked: () -> Unit,
     onSignOutClicked: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -46,7 +47,8 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     scrollBehavior = scrollBehavior,
-                    onMenuClicked = onMenuClicked
+                    onMenuClicked = onMenuClicked,
+                    onDeleteAllClicked = onDeleteAllClicked
                 )
             },
 

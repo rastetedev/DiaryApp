@@ -18,7 +18,8 @@ import com.androiddevhispano.diaryapp.R
 @Composable
 fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
-    onMenuClicked: () -> Unit
+    onMenuClicked: () -> Unit,
+    onDeleteAllClicked: () -> Unit
 ) {
     TopAppBar(
         scrollBehavior = scrollBehavior,
@@ -34,7 +35,7 @@ fun HomeTopBar(
             IconButton(onClick = onMenuClicked) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
             }
-            IconButton(onClick = onMenuClicked) {
+            IconButton(onClick = onDeleteAllClicked) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
         }

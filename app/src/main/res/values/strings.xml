@@ -28,5 +28,9 @@
     <string name="delete">Delete</string>
     <string name="delete_gallery_image">Delete gallery image</string>
     <string name="confirm_delete_gallery_image">Are you sure you want to delete gallery image?</string>
+    <string name="delete_all_diaries">Delete all diaries</string>
+    <string name="confirm_delete_all_diaries">Are you sure you want to delete all diaries?</string>
+    <string name="delete_all_diaries_successful">All diaries was removed successfully</string>
+    <string name="delete_all_diaries_error">There was an error trying to delete all diaries. Try later.</string>
 
 </resources>

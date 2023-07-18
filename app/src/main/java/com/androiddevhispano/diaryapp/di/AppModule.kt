@@ -2,6 +2,8 @@ package com.androiddevhispano.diaryapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.androiddevhispano.diaryapp.connectivity.ConnectivityObserver
+import com.androiddevhispano.diaryapp.connectivity.NetworkConnectivityObserver
 import com.androiddevhispano.diaryapp.data.localdatabase.DiaryDatabase
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDeleteDao
 import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
@@ -28,6 +30,14 @@ object AppModule {
             DiaryDatabase::class.java,
             name = "diary_database.db"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkConnectivityObserver(
+        @ApplicationContext context: Context
+    ): ConnectivityObserver {
+        return NetworkConnectivityObserver(context)
     }
 
     @Provides

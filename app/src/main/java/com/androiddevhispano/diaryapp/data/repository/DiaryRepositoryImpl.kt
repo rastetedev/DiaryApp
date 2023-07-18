@@ -6,7 +6,7 @@ import com.androiddevhispano.diaryapp.utils.RequestState
 import com.androiddevhispano.diaryapp.utils.toInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
-import io.realm.kotlin.log.LogLevel
+import io.realm.kotlin.log.RealmLog
 import io.realm.kotlin.mongodb.App
 import io.realm.kotlin.mongodb.sync.SyncConfiguration
 import io.realm.kotlin.query.Sort
@@ -37,8 +37,8 @@ object DiaryRepositoryImpl : DiaryRepository {
                         name = "User's Diaries"
                     )
                 }
-                .log(LogLevel.ALL)
                 .build()
+            RealmLog.addDefaultSystemLogger()
             realm = Realm.open(config)
         }
     }
@@ -138,6 +138,22 @@ object DiaryRepositoryImpl : DiaryRepository {
                     } else {
                         RequestState.Error(DiaryNotExistException())
                     }
+                } catch (e: Exception) {
+                    RequestState.Error(e)
+                }
+            }
+        } else {
+            RequestState.Error(UserNotAuthenticatedException())
+        }
+    }
+
+    override suspend fun deleteAllDiaries(): RequestState<Unit> {
+        return if (user != null) {
+            realm.write {
+                val diaries = query<Diary>("ownerId == $0", user.id).find()
+                try {
+                    delete(diaries)
+                    RequestState.Success(Unit)
                 } catch (e: Exception) {
                     RequestState.Error(e)
                 }
