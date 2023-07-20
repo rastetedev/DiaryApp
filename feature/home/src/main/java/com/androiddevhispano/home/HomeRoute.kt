@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.androiddevhispano.diaryapp.home.BuildConfig
 import com.androiddevhispano.diaryapp.ui.R
 import com.androiddevhispano.diaryapp.ui.components.DisplayAlertDialog
 import com.androiddevhispano.diaryapp.utils.RequestState
@@ -112,7 +113,7 @@ fun NavGraphBuilder.homeRoute(
             },
             onConfirmClicked = {
                 coroutineScope.launch(Dispatchers.IO) {
-                    App.create("BuildConfig.MONGO_APP_ID").currentUser?.logOut()
+                    App.create(BuildConfig.MONGO_APP_ID).currentUser?.logOut()
                     Firebase.auth.signOut()
                     withContext(Dispatchers.Main) {
                         navigateToAuthentication()

@@ -58,7 +58,8 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     scrollBehavior = scrollBehavior,
-                    diariesAreNotEmpty = (diariesRequestState is RequestState.Success && diariesRequestState.data.isNotEmpty()),
+                    diariesAreNotEmpty = (diariesRequestState is RequestState.Success &&
+                            diariesRequestState.data.isNotEmpty()),
                     onMenuClicked = onMenuClicked,
                     diariesFilterByDate = diariesFilterByDate,
                     onSpecificDateClicked = {

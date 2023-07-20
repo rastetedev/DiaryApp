@@ -2,7 +2,6 @@ package com.androiddevhispano.write
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,7 +22,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.androiddevhispano.diaryapp.ui.R
 import com.androiddevhispano.diaryapp.ui.models.Mood
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 fun NavGraphBuilder.writeRoute(
     onBackPressed: () -> Unit
 ) {

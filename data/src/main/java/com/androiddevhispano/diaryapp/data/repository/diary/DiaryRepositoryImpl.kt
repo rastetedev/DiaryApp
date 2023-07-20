@@ -1,6 +1,6 @@
 package com.androiddevhispano.diaryapp.data.repository.diary
 
-
+import com.androiddevhispano.diaryapp.data.BuildConfig
 import com.androiddevhispano.diaryapp.data.models.Diary
 import com.androiddevhispano.diaryapp.data.repository.DiaryNotExistException
 import com.androiddevhispano.diaryapp.data.repository.UserNotAuthenticatedException
@@ -23,7 +23,7 @@ import java.time.ZonedDateTime
 
 object DiaryRepositoryImpl : DiaryRepository {
 
-    private val app = App.Companion.create("BuildConfig.MONGO_APP_ID")
+    private val app = App.Companion.create(BuildConfig.MONGO_APP_ID)
     private val user = app.currentUser
 
     private lateinit var realm: Realm

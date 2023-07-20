@@ -13,7 +13,7 @@ open class Diary : RealmObject {
     @PrimaryKey
     var _id: ObjectId = ObjectId.invoke()
     var ownerId: String = ""
-    var mood: String = Mood.NEUTRAL.name
+    var mood: String = Mood.Neutral.toString()
     var title: String = ""
     var description: String = ""
     var images: RealmList<String> = realmListOf()

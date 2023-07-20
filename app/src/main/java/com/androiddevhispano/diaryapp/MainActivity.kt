@@ -101,7 +101,7 @@ private fun retryDeleteImagesRemovedFromFirebase(
 }
 
 private fun getStartDestination(): String {
-    val user = App.create("BuildConfig.MONGO_APP_ID").currentUser
+    val user = App.create(BuildConfig.MONGO_APP_ID).currentUser
     val firebaseUser = Firebase.auth.currentUser
     return if (user != null && user.loggedIn && firebaseUser != null) Screen.Home.route
     else Screen.Authentication.route

@@ -15,6 +15,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "MONGO_APP_ID", project.property("MONGO_APP_ID").toString())
+        buildConfigField("String", "CLIENT_ID_WEB", project.property("CLIENT_ID_WEB").toString())
+
     }
 
     buildTypes {

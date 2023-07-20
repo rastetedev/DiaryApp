@@ -135,21 +135,22 @@ class WriteViewModel @Inject constructor(
         onError: () -> Unit
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val diarySavedResult = DiaryRepositoryImpl.insertDiary(
-                Diary().apply {
-                    title = uiState.title
-                    description = uiState.description
-                    mood = uiState.mood.name
-                    date = uiState.updatedDate?.toRealmInstant()
-                        ?: run { uiState.date.toRealmInstant() }
-                    images = galleryState.images.map { it.remoteImagePath }.toRealmList()
+            val diary = Diary().apply {
+                title = uiState.title
+                description = uiState.description
+                mood = uiState.mood.name
+                date = uiState.updatedDate?.toRealmInstant()
+                    ?: run { uiState.date.toRealmInstant() }
+                images = galleryState.images.map { it.remoteImagePath }.toRealmList()
 
-                    if (uiState.diaryId != null) {
-                        _id = ObjectId.invoke(uiState.diaryId!!)
-                    }
+                if (uiState.diaryId != null) {
+                    _id = ObjectId.invoke(uiState.diaryId!!)
                 }
+            }
+            val diarySavedResult =
+                if (uiState.diaryId != null) DiaryRepositoryImpl.updateDiary(diary) else
+                    DiaryRepositoryImpl.insertDiary(diary)
 
-            )
             withContext(Dispatchers.Main) {
                 if (diarySavedResult is RequestState.Success) {
                     withContext(Dispatchers.IO) {

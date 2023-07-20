@@ -110,7 +110,10 @@ fun DiaryHolder(
             tonalElevation = Elevation.Level1
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                DiaryHeader(moodName = diary.mood, time = diary.date.toInstant())
+                DiaryHeader(
+                    moodName = diary.mood,
+                    time = diary.date.toInstant()
+                )
                 Text(
                     modifier = Modifier.padding(all = extraLarge),
                     text = diary.description,
