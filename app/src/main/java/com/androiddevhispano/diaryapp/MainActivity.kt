@@ -7,10 +7,10 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.androiddevhispano.diaryapp.data.repository.ImageRepository
-import com.androiddevhispano.diaryapp.navigation.Screen
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepository
 import com.androiddevhispano.diaryapp.navigation.SetupNavGraph
 import com.androiddevhispano.diaryapp.ui.theme.DiaryAppTheme
+import com.androiddevhispano.diaryapp.utils.navigation.Screen
 import com.androiddevhispano.diaryapp.utils.retryDeletingImageFromFirebase
 import com.androiddevhispano.diaryapp.utils.retryUploadImageToFirebase
 import com.google.firebase.FirebaseApp
@@ -68,7 +68,9 @@ private fun retryUploadImagesToFirebase(
     scope.launch(Dispatchers.IO) {
         imageRepository.getImagesToUpload().forEach {
             retryUploadImageToFirebase(
-                image = it,
+                remoteImagePath = it.remoteImagePath,
+                imageUri = it.imageUri,
+                sessionUri = it.sessionUri,
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         imageRepository.removeImageToUpload(it.id)
@@ -99,7 +101,7 @@ private fun retryDeleteImagesRemovedFromFirebase(
 }
 
 private fun getStartDestination(): String {
-    val user = App.create(BuildConfig.MONGO_APP_ID).currentUser
+    val user = App.create("BuildConfig.MONGO_APP_ID").currentUser
     val firebaseUser = Firebase.auth.currentUser
     return if (user != null && user.loggedIn && firebaseUser != null) Screen.Home.route
     else Screen.Authentication.route

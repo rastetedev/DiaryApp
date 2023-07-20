@@ -1,0 +1,7 @@
+<resources>
+    <string name="auth_success">Authentication successful</string>
+    <string name="auth_title">Welcome back</string>
+    <string name="auth_subtitle">Please sign in to continue</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="please_wait">Please wait...</string>
+</resources>

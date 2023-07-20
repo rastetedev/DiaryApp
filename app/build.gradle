@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace 'com.androiddevhispano.diaryapp'
-    compileSdk 33
+    compileSdk ProjectConfig.compileSdk
 
     defaultConfig {
         applicationId "com.androiddevhispano.diaryapp"
-        minSdk 24
-        targetSdk 33
+        minSdk ProjectConfig.minSdk
+        targetSdk ProjectConfig.targetSdk
         versionCode 1
         versionName "1.0"
 
@@ -22,9 +22,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-
-        buildConfigField "String", "MONGO_APP_ID", project.property("MONGO_APP_ID")
-        buildConfigField "String", "CLIENT_ID_WEB", project.property("CLIENT_ID_WEB")
     }
 
     buildTypes {
@@ -46,7 +43,7 @@ android {
         buildConfig true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.8'
+        kotlinCompilerExtensionVersion ProjectConfig.kotlinCompilerComposeVersion
     }
     packagingOptions {
         resources {
@@ -124,4 +121,11 @@ dependencies {
 
     // DESUGAR JDK
     coreLibraryDesugaring libs.android.tools.desugar
+
+    implementation(project(":core:ui"))
+    implementation(project(":core:utils"))
+    implementation(project(":feature:authentication"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:write"))
+    implementation(project(":data"))
 }

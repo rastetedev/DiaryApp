@@ -2,13 +2,13 @@ package com.androiddevhispano.diaryapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.androiddevhispano.diaryapp.connectivity.ConnectivityObserver
-import com.androiddevhispano.diaryapp.connectivity.NetworkConnectivityObserver
+import com.androiddevhispano.diaryapp.utils.connectivity.ConnectivityObserver
+import com.androiddevhispano.diaryapp.utils.connectivity.NetworkConnectivityObserver
 import com.androiddevhispano.diaryapp.data.localdatabase.DiaryDatabase
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDeleteDao
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
-import com.androiddevhispano.diaryapp.data.repository.ImageRepository
-import com.androiddevhispano.diaryapp.data.repository.ImageRepositoryImpl
+import com.androiddevhispano.diaryapp.data.localdatabase.dao.ImageToDeleteDao
+import com.androiddevhispano.diaryapp.data.localdatabase.dao.ImageToUploadDao
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepository
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

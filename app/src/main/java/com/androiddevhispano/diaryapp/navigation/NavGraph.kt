@@ -3,9 +3,10 @@ package com.androiddevhispano.diaryapp.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.androiddevhispano.diaryapp.screens.authentication.authenticationRoute
-import com.androiddevhispano.diaryapp.screens.home.homeRoute
-import com.androiddevhispano.diaryapp.screens.write.writeRoute
+import com.androiddevhispano.authentication.authenticationRoute
+import com.androiddevhispano.diaryapp.utils.navigation.Screen
+import com.androiddevhispano.home.homeRoute
+import com.androiddevhispano.write.writeRoute
 
 @Composable
 fun SetupNavGraph(
