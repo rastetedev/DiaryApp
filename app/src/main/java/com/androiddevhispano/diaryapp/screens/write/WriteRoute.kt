@@ -18,7 +18,7 @@ import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen
-import com.androiddevhispano.diaryapp.utils.getType
+import com.androiddevhispano.diaryapp.ui.utils.getType
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 

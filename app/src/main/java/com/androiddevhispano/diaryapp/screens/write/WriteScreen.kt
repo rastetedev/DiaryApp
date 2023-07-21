@@ -21,8 +21,8 @@ import com.androiddevhispano.diaryapp.components.DisplayAlertDialog
 import com.androiddevhispano.diaryapp.components.ZoomableImage
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
-import com.androiddevhispano.diaryapp.utils.toLocalDate
-import com.androiddevhispano.diaryapp.utils.toLocalTime
+import com.androiddevhispano.diaryapp.ui.utils.toLocalDate
+import com.androiddevhispano.diaryapp.ui.utils.toLocalTime
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState

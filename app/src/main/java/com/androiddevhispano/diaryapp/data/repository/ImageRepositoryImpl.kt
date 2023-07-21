@@ -1,9 +1,9 @@
 package com.androiddevhispano.diaryapp.data.repository
 
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDelete
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDeleteDao
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUploadDao
+import com.androiddevhispano.diaryapp.data.localdb.table.ImageToDelete
+import com.androiddevhispano.diaryapp.data.localdb.dao.ImageToDeleteDao
+import com.androiddevhispano.diaryapp.data.localdb.table.ImageToUpload
+import com.androiddevhispano.diaryapp.data.localdb.dao.ImageToUploadDao
 import javax.inject.Inject
 
 class ImageRepositoryImpl @Inject constructor(

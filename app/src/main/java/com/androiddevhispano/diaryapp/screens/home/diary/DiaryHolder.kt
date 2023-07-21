@@ -43,8 +43,8 @@ import com.androiddevhispano.diaryapp.ui.theme.Size.doubleExtraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraSmall
 import com.androiddevhispano.diaryapp.ui.theme.Size.tiny
-import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
-import com.androiddevhispano.diaryapp.utils.toInstant
+import com.androiddevhispano.diaryapp.data.utils.fetchImagesFromFirebase
+import com.androiddevhispano.diaryapp.data.utils.toInstant
 import io.realm.kotlin.ext.realmListOf
 
 @Composable

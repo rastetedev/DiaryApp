@@ -3,7 +3,7 @@ package com.androiddevhispano.diaryapp.data.repository
 import com.androiddevhispano.diaryapp.BuildConfig
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
-import com.androiddevhispano.diaryapp.utils.toInstant
+import com.androiddevhispano.diaryapp.data.utils.toInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.log.RealmLog

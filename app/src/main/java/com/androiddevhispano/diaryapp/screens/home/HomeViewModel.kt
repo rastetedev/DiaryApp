@@ -6,12 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.connectivity.ConnectivityObserver
+import com.androiddevhispano.diaryapp.ui.connectivity.ConnectivityObserver
 import com.androiddevhispano.diaryapp.data.repository.DiaryRepositoryImpl
 import com.androiddevhispano.diaryapp.data.repository.ImageRepository
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
-import com.androiddevhispano.diaryapp.utils.deleteAllImagesForAllDiaries
+import com.androiddevhispano.diaryapp.data.utils.deleteAllImagesForAllDiaries
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

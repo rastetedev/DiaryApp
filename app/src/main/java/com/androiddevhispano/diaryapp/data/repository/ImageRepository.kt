@@ -1,7 +1,7 @@
 package com.androiddevhispano.diaryapp.data.repository
 
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToDelete
-import com.androiddevhispano.diaryapp.data.localdatabase.ImageToUpload
+import com.androiddevhispano.diaryapp.data.localdb.table.ImageToDelete
+import com.androiddevhispano.diaryapp.data.localdb.table.ImageToUpload
 
 interface ImageRepository {
 

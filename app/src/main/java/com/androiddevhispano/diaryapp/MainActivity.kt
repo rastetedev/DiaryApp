@@ -11,8 +11,8 @@ import com.androiddevhispano.diaryapp.data.repository.ImageRepository
 import com.androiddevhispano.diaryapp.navigation.Screen
 import com.androiddevhispano.diaryapp.navigation.SetupNavGraph
 import com.androiddevhispano.diaryapp.ui.theme.DiaryAppTheme
-import com.androiddevhispano.diaryapp.utils.retryDeletingImageFromFirebase
-import com.androiddevhispano.diaryapp.utils.retryUploadImageToFirebase
+import com.androiddevhispano.diaryapp.data.utils.retryDeletingImageFromFirebase
+import com.androiddevhispano.diaryapp.data.utils.retryUploadImageToFirebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase

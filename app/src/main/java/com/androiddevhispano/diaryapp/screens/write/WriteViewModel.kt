@@ -15,13 +15,13 @@ import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.utils.RequestState
-import com.androiddevhispano.diaryapp.utils.createRemoteNameWith
-import com.androiddevhispano.diaryapp.utils.deleteImagesFromFirebase
-import com.androiddevhispano.diaryapp.utils.extractImagePath
-import com.androiddevhispano.diaryapp.utils.fetchImagesFromFirebase
-import com.androiddevhispano.diaryapp.utils.toInstant
-import com.androiddevhispano.diaryapp.utils.toRealmInstant
-import com.androiddevhispano.diaryapp.utils.uploadImagesToFirebase
+import com.androiddevhispano.diaryapp.ui.utils.createRemoteName
+import com.androiddevhispano.diaryapp.data.utils.deleteImagesFromFirebase
+import com.androiddevhispano.diaryapp.ui.utils.extractImagePath
+import com.androiddevhispano.diaryapp.data.utils.fetchImagesFromFirebase
+import com.androiddevhispano.diaryapp.data.utils.toInstant
+import com.androiddevhispano.diaryapp.data.utils.toRealmInstant
+import com.androiddevhispano.diaryapp.data.utils.uploadImagesToFirebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.Dispatchers
@@ -78,7 +78,7 @@ class WriteViewModel @Inject constructor(
                                 galleryState.addImage(
                                     GalleryImage(
                                         imageUri = uriDownloaded,
-                                        remoteImagePath = uriDownloaded.toString()
+                                        remoteImagePath = uriDownloaded
                                             .extractImagePath()
                                     )
                                 )
@@ -215,7 +215,7 @@ class WriteViewModel @Inject constructor(
         imageUri: Uri,
         imageType: String
     ) {
-        val remoteImagePath = imageUri createRemoteNameWith imageType
+        val remoteImagePath = imageUri.createRemoteName(imageType)
         galleryState.addImage(
             GalleryImage(
                 imageUri = imageUri,

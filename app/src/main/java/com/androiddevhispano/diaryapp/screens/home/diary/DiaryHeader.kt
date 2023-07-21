@@ -24,13 +24,13 @@ import androidx.compose.ui.unit.dp
 import com.androiddevhispano.diaryapp.models.Mood
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.large
-import com.androiddevhispano.diaryapp.utils.simpleTimeFormatter
+import com.androiddevhispano.diaryapp.ui.utils.simpleTimeFormatter
 import java.time.Instant
 
 @Composable
 fun DiaryHeader(moodName: String, time: Instant) {
     val mood by remember { mutableStateOf(Mood.valueOf(moodName)) }
-    val formatter = remember { simpleTimeFormatter() }
+    val timeFormatted = remember { simpleTimeFormatter().format(time) }
 
     Row(
         modifier = Modifier
@@ -54,7 +54,7 @@ fun DiaryHeader(moodName: String, time: Instant) {
             )
         }
         Text(
-            text = formatter.format(time),
+            text = timeFormatted,
             color = mood.contentColor,
             style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
         )
