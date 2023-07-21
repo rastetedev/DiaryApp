@@ -96,14 +96,14 @@ fun HomeScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.no_diaries), style = TextStyle(
+                            text = stringResource(id = R.string.no_diaries),
+                            style = TextStyle(
                                 fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                                 fontWeight = FontWeight.Medium
                             )
                         )
                     }
                 }
-
 
                 else -> {
                     Box(

@@ -35,7 +35,7 @@ fun AuthenticationContent(
         ) {
             Image(
                 modifier = Modifier.size(120.dp),
-                painter = painterResource(id = R.drawable.google_logo),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.height(20.dp))
