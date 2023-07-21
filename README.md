@@ -9,7 +9,7 @@
 </h1>
 
   <p align="center">
-    [Complete Multi-Modular Android App ](https://stevdza-san.com/p/multi-module-android-development-with-mongo-db-realm-sync) - Project created thanks to Stevdza's course
+    [Complete Multi-Modular Android App ](https://stevdza-san.com/p/multi-module-android-development-with-mongo-db-realm-sync) - Project created thanks to Stevdzan's course
     <br />
 
 
@@ -180,7 +180,7 @@ The DiaryApp project uses many popular libraries and tools in the Android Ecosys
 # :memo: Original Author :memo:
 
 - [@stevdza-san](https://github.com/stevdza-san)
-- 
+
 # :memo: My Version Author :memo:
 
 - [@rastetedev](https://github.com/rastetedev)
