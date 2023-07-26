@@ -2,9 +2,10 @@ package com.androiddevhispano.diaryapp.screens.authentication
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.androiddevhispano.diaryapp.R
@@ -22,8 +23,8 @@ fun NavGraphBuilder.authenticationRoute(
         enterTransition = { slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right) },
         exitTransition = { slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left) }
     ) {
-        val viewModel: AuthenticationViewModel = viewModel()
-        val loadingState by viewModel.loadingState
+        val viewModel: AuthenticationViewModel = hiltViewModel()
+        val authenticationUiState by viewModel.authenticatedState.collectAsState()
 
         val oneTapSignInState = rememberOneTapSignInState()
         val messageBarState = rememberMessageBarState()
@@ -36,30 +37,22 @@ fun NavGraphBuilder.authenticationRoute(
 
         AuthenticationScreen(
             messageBarState = messageBarState,
-            loadingState = loadingState,
-            authenticatedState = viewModel.authenticatedState,
+            loadingState = authenticationUiState.signInButtonIsLoading,
+            authenticatedState = authenticationUiState.isAuthenticated,
             oneTapSignInState = oneTapSignInState,
             onSignInClicked = {
                 viewModel.setLoading(true)
                 oneTapSignInState.open()
             },
             onGoogleTokenIdReceived = { tokenId ->
-                viewModel.signInWithFirebase(
+                viewModel.signIn(
                     tokenId,
                     onSuccess = {
-                        viewModel.signInWithMongoDBAtlas(
-                            tokenId,
-                            onSuccess = {
-                                messageBarState.addSuccess(context.getString(R.string.auth_success))
-                                viewModel.setLoading(false)
-                            }, onError = { exception ->
-                                messageBarState.addError(exception)
-                                viewModel.setLoading(false)
-                            }
-                        )
+                        messageBarState.addSuccess(context.getString(R.string.auth_success))
+                        viewModel.setLoading(false)
                     },
-                    onError = { exception ->
-                        messageBarState.addError(exception)
+                    onError = { message ->
+                        messageBarState.addError(Exception(message))
                         viewModel.setLoading(false)
                     }
                 )

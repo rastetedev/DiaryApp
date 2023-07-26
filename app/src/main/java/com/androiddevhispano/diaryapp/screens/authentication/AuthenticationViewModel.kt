@@ -1,72 +1,64 @@
 package com.androiddevhispano.diaryapp.screens.authentication
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.BuildConfig
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
-import io.realm.kotlin.mongodb.App
-import io.realm.kotlin.mongodb.Credentials
-import io.realm.kotlin.mongodb.GoogleAuthType
+import arrow.core.Either
+import com.androiddevhispano.diaryapp.data.repository.auth.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class AuthenticationViewModel : ViewModel() {
+@HiltViewModel
+class AuthenticationViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
-    var loadingState = mutableStateOf(false)
-        private set
+    private val _authenticationUiState = MutableStateFlow(AuthenticationUiState())
+    val authenticatedState = _authenticationUiState.asStateFlow()
 
-    var authenticatedState by mutableStateOf(false)
-        private set
-
-    fun setLoading(loading: Boolean) {
-        loadingState.value = loading
+    fun setLoading(loadingState: Boolean) {
+        _authenticationUiState.update {
+            it.copy(
+                signInButtonIsLoading = loadingState
+            )
+        }
     }
 
-    fun signInWithMongoDBAtlas(
+    fun signIn(
         tokenId: String,
         onSuccess: () -> Unit,
-        onError: (Exception) -> Unit
+        onError: (String) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    App.create(BuildConfig.MONGO_APP_ID).login(
-                        Credentials.google(
-                            token = tokenId,
-                            type = GoogleAuthType.ID_TOKEN
-                        )
-                    ).loggedIn
+            withContext(Dispatchers.IO) {
+                when (val result = authRepository.authenticate(tokenId)) {
+                    is Either.Left -> onError(result.value)
+                    is Either.Right -> {
+                        if (result.value) {
+                            onSuccess()
+                            delay(600)
+                            _authenticationUiState.update {
+                                it.copy(
+                                    isAuthenticated = true
+                                )
+                            }
+                        } else {
+                            onError("Error trying to authenticate")
+                        }
+                    }
                 }
-                if (result) {
-                    onSuccess()
-                    delay(600)
-                    authenticatedState = true
-                }
-            } catch (e: Exception) {
-                onError(e)
             }
         }
     }
 
-    fun signInWithFirebase(
-        tokenId: String,
-        onSuccess: () -> Unit,
-        onError: (Exception) -> Unit
-    ) {
-        val credential = GoogleAuthProvider.getCredential(tokenId, null)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    onSuccess()
-                } else {
-                    it.exception?.let { onError }
-                }
-            }
-    }
+    data class AuthenticationUiState(
+        val signInButtonIsLoading: Boolean = false,
+        val isAuthenticated: Boolean = false
+    )
 }

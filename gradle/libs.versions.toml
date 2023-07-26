@@ -1,5 +1,7 @@
 [versions]
 android-plugin-version = "8.0.2"
+arrow-version = "1.2.0"
+arrow-fx-coroutines = "1.2.0"
 compose-boom-version = "2023.06.01"
 dagger-hilt-plugin-version = "2.44"
 hilt-version = "2.44.2"
@@ -29,19 +31,21 @@ androidx-core-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 androidx-hilt-navigation-compose = "androidx.hilt:hilt-navigation-compose:1.0.0"
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-version" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-version" }
-androidx-navigation-compose = "androidx.navigation:navigation-compose:2.7.0-alpha01"
+androidx-navigation-compose = "androidx.navigation:navigation-compose:2.7.0-beta02"
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-version" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-version" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-version" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.5.1" }
 androidx-test-junit = "androidx.test.ext:junit:1.1.5"
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow-version" }
+arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow-version" }
 coil-compose = "io.coil-kt:coil-compose:2.2.2"
 com-github-stevdza-san-messagebarcompose = "com.github.stevdza-san:MessageBarCompose:1.0.5"
 com-github-stevdza-san-onetapcompose = "com.github.stevdza-san:OneTapCompose:1.0.0"
-google-accompanist-pager = "com.google.accompanist:accompanist-pager:0.27.0"
+google-accompanist-pager = "com.google.accompanist:accompanist-pager:0.28.0"
 google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-version" }
 google-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt-version" }
-google-firebase-auth = "com.google.firebase:firebase-auth-ktx:22.0.0"
+google-firebase-auth = "com.google.firebase:firebase-auth-ktx:22.1.0"
 google-firebase-storage = "com.google.firebase:firebase-storage-ktx:20.2.1"
 junit = "junit:junit:4.13.2"
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core-version" }
