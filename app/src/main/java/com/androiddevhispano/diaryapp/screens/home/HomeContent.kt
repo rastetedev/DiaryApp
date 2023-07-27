@@ -15,27 +15,27 @@ import java.time.LocalDate
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
-    modifier: Modifier = Modifier,
-    diaryNotes: Map<LocalDate, List<Diary>>,
-    onDiaryClicked: (diaryId: String) -> Unit
+        modifier: Modifier = Modifier,
+        homeUiState: HomeViewModel.HomeUiState,
+        onDiaryClicked: (diaryId: String) -> Unit
 ) {
 
     LazyColumn(
-        modifier = modifier
-            .padding(horizontal = screenPadding),
+            modifier = modifier
+                    .padding(horizontal = screenPadding),
     ) {
-        diaryNotes.forEach { (localDate, diaries) ->
+        homeUiState.diaries.forEach { (localDate, diaries) ->
             stickyHeader(key = localDate) {
                 DateHeader(localDate = localDate)
             }
 
             items(
-                items = diaries,
-                key = { it._id.toString() }
+                    items = diaries,
+                    key = { it.id }
             ) {
                 DiaryHolder(
-                    diary = it,
-                    onDiaryClicked = onDiaryClicked
+                        diary = it,
+                        onDiaryClicked = onDiaryClicked
                 )
             }
         }

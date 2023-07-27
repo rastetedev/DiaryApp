@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,35 +26,35 @@ import com.androiddevhispano.diaryapp.ui.utils.simpleTimeFormatter
 import java.time.Instant
 
 @Composable
-fun DiaryHeader(moodName: String, time: Instant) {
-    val mood by remember { mutableStateOf(Mood.valueOf(moodName)) }
+fun DiaryHeader(mood: Mood, time: Instant) {
+
     val timeFormatted = remember { simpleTimeFormatter().format(time) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(mood.containerColor)
-            .padding(horizontal = extraLarge, vertical = large),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier
+                    .fillMaxWidth()
+                    .background(mood.containerColor)
+                    .padding(horizontal = extraLarge, vertical = large),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                modifier = Modifier.size(18.dp),
-                painter = painterResource(id = mood.icon),
-                contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    painter = painterResource(id = mood.icon),
+                    contentDescription = null,
             )
             Spacer(modifier = Modifier.width(large))
             Text(
-                text = mood.name,
-                color = mood.contentColor,
-                style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                    text = mood.name,
+                    color = mood.contentColor,
+                    style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
             )
         }
         Text(
-            text = timeFormatted,
-            color = mood.contentColor,
-            style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
+                text = timeFormatted,
+                color = mood.contentColor,
+                style = TextStyle(fontSize = MaterialTheme.typography.bodyMedium.fontSize)
         )
     }
 }
@@ -64,5 +62,5 @@ fun DiaryHeader(moodName: String, time: Instant) {
 @Composable
 @Preview
 fun DiaryHeaderPreview() {
-    DiaryHeader(moodName = Mood.Bored.name, time = Instant.now())
+    DiaryHeader(mood = Mood.Bored, time = Instant.now())
 }

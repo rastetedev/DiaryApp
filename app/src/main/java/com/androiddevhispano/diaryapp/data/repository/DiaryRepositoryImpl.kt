@@ -3,7 +3,6 @@ package com.androiddevhispano.diaryapp.data.repository
 import com.androiddevhispano.diaryapp.BuildConfig
 import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.utils.RequestState
-import com.androiddevhispano.diaryapp.data.utils.toInstant
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.log.RealmLog
@@ -15,10 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.mongodb.kbson.ObjectId
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.ZonedDateTime
 
 object DiaryRepositoryImpl : DiaryRepository {
@@ -47,7 +44,7 @@ object DiaryRepositoryImpl : DiaryRepository {
         }
     }
 
-    override fun getAllDiaries(): Flow<RequestState<Map<LocalDate, List<Diary>>>> {
+    override fun getAllDiaries(): Flow<RequestState<List<Diary>>> {
         return if (user != null) {
             try {
                 realm.query<Diary>(
@@ -58,10 +55,6 @@ object DiaryRepositoryImpl : DiaryRepository {
                     .map { result ->
                         RequestState.Success(
                             data = result.list
-                                .groupBy {
-                                    it.date.toInstant().atZone(ZoneId.systemDefault())
-                                        .toLocalDate()
-                                }
                         )
                     }
             } catch (e: Exception) {
@@ -72,7 +65,7 @@ object DiaryRepositoryImpl : DiaryRepository {
         }
     }
 
-    override fun getFilteredDiariesByDate(zonedDateTime: ZonedDateTime): Flow<RequestState<Map<LocalDate, List<Diary>>>> {
+    override fun getFilteredDiariesByDate(zonedDateTime: ZonedDateTime): Flow<RequestState<List<Diary>>> {
         return if (user != null) {
             try {
                 realm.query<Diary>(
@@ -97,10 +90,6 @@ object DiaryRepositoryImpl : DiaryRepository {
                     .map { result ->
                         RequestState.Success(
                             data = result.list
-                                .groupBy {
-                                    it.date.toInstant().atZone(ZoneId.systemDefault())
-                                        .toLocalDate()
-                                }
                         )
                     }
             } catch (e: Exception) {

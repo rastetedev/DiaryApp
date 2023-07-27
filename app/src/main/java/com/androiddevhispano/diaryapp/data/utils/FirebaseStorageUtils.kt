@@ -1,8 +1,6 @@
 package com.androiddevhispano.diaryapp.data.utils
 
 import android.net.Uri
-import androidx.core.net.toUri
-import com.androiddevhispano.diaryapp.data.localdb.table.ImageToUpload
 import com.androiddevhispano.diaryapp.models.GalleryImage
 import com.androiddevhispano.diaryapp.screens.write.gallery.GalleryState
 import com.androiddevhispano.diaryapp.ui.utils.FIREBASE_IMAGES_DIRECTORY
@@ -35,23 +33,25 @@ fun fetchImagesFromFirebase(
 }
 
 fun retryUploadImageToFirebase(
-    image: ImageToUpload,
+    imageUri: Uri,
+    imageRemotePath: String,
+    sessionUri: Uri,
     onSuccess: () -> Unit
 ) {
     val storage = FirebaseStorage.getInstance().reference
-    storage.child(image.remoteImagePath).putFile(
-        image.imageUri.toUri(),
+    storage.child(imageRemotePath).putFile(
+        imageUri,
         storageMetadata {},
-        image.sessionUri.toUri()
+        sessionUri
     ).addOnSuccessListener { onSuccess() }
 }
 
 fun deleteImagesFromFirebase(
-    remoteImagePathList: List<String>,
+    imageRemotePathList: List<String>,
     onDeleteFail: (remoteImagePath: String) -> Unit
 ) {
     val storage = FirebaseStorage.getInstance().reference
-    remoteImagePathList.forEach { remoteImagePath ->
+    imageRemotePathList.forEach { remoteImagePath ->
         storage.child(remoteImagePath).delete()
             .addOnFailureListener {
                 onDeleteFail(remoteImagePath)
@@ -60,11 +60,11 @@ fun deleteImagesFromFirebase(
 }
 
 fun retryDeletingImageFromFirebase(
-    remoteImagePath: String,
+    imageRemotePath: String,
     onSuccess: () -> Unit
 ) {
     val storage = FirebaseStorage.getInstance().reference
-    storage.child(remoteImagePath).delete()
+    storage.child(imageRemotePath).delete()
         .addOnSuccessListener { onSuccess() }
 }
 

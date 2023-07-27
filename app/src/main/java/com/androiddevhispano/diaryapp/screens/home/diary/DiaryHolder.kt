@@ -37,20 +37,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.androiddevhispano.diaryapp.R
 import com.androiddevhispano.diaryapp.components.GalleryContainer
-import com.androiddevhispano.diaryapp.models.Diary
 import com.androiddevhispano.diaryapp.ui.theme.Elevation
 import com.androiddevhispano.diaryapp.ui.theme.Size.doubleExtraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraLarge
 import com.androiddevhispano.diaryapp.ui.theme.Size.extraSmall
 import com.androiddevhispano.diaryapp.ui.theme.Size.tiny
 import com.androiddevhispano.diaryapp.data.utils.fetchImagesFromFirebase
-import com.androiddevhispano.diaryapp.data.utils.toInstant
-import io.realm.kotlin.ext.realmListOf
+import com.androiddevhispano.diaryapp.models.Mood
+import com.androiddevhispano.diaryapp.screens.home.HomeViewModel
 
 @Composable
 fun DiaryHolder(
-    diary: Diary,
-    onDiaryClicked: (diaryId: String) -> Unit
+        diary: HomeViewModel.DiaryCard,
+        onDiaryClicked: (diaryId: String) -> Unit
 ) {
     val localDensity = LocalDensity.current
     val context = LocalContext.current
@@ -63,84 +62,84 @@ fun DiaryHolder(
         if (galleryOpened && downloadedImages.isEmpty()) {
             galleryLoading = true
             fetchImagesFromFirebase(
-                remoteImageUrlList = diary.images,
-                onImageDownload = { uriDownloaded ->
-                    downloadedImages.add(uriDownloaded)
-                },
-                onBucketDownloadSuccess = {
-                    galleryLoading = false
-                },
-                onBucketDownloadFail = {
-                    galleryLoading = false
-                    galleryOpened = false
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.download_images_error),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                    remoteImageUrlList = diary.imagesUrl,
+                    onImageDownload = { uriDownloaded ->
+                        downloadedImages.add(uriDownloaded)
+                    },
+                    onBucketDownloadSuccess = {
+                        galleryLoading = false
+                    },
+                    onBucketDownloadFail = {
+                        galleryLoading = false
+                        galleryOpened = false
+                        Toast.makeText(
+                                context,
+                                context.getString(R.string.download_images_error),
+                                Toast.LENGTH_SHORT
+                        ).show()
+                    }
             )
         }
     }
 
     Row(modifier = Modifier
-        .clickable(
-            indication = null,
-            interactionSource = remember {
-                MutableInteractionSource()
+            .clickable(
+                    indication = null,
+                    interactionSource = remember {
+                        MutableInteractionSource()
+                    }
+            ) {
+                onDiaryClicked(diary.id)
             }
-        ) {
-            onDiaryClicked(diary._id.toHexString())
-        }
     ) {
         Spacer(modifier = Modifier.width(extraLarge))
         Box(
-            modifier = Modifier
-                .width(extraSmall)
-                .height(componentHeight + doubleExtraLarge)
-                .background(MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                        .width(extraSmall)
+                        .height(componentHeight + doubleExtraLarge)
+                        .background(MaterialTheme.colorScheme.surface),
         )
         Spacer(modifier = Modifier.width(doubleExtraLarge))
         Surface(
-            modifier = Modifier
-                .clip(shape = Shapes().medium)
-                .onGloballyPositioned {
-                    componentHeight = with(localDensity) { it.size.height.toDp() }
-                },
-            tonalElevation = Elevation.Level1
+                modifier = Modifier
+                        .clip(shape = Shapes().medium)
+                        .onGloballyPositioned {
+                            componentHeight = with(localDensity) { it.size.height.toDp() }
+                        },
+                tonalElevation = Elevation.Level1
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
-                DiaryHeader(moodName = diary.mood, time = diary.date.toInstant())
+                DiaryHeader(mood = diary.mood, time = diary.date.toInstant())
                 Text(
-                    modifier = Modifier.padding(all = extraLarge),
-                    text = diary.description,
-                    style = TextStyle(fontSize = MaterialTheme.typography.bodyLarge.fontSize),
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis
+                        modifier = Modifier.padding(all = extraLarge),
+                        text = diary.description,
+                        style = TextStyle(fontSize = MaterialTheme.typography.bodyLarge.fontSize),
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis
                 )
-                if (diary.images.isNotEmpty()) {
+                if (diary.imagesUrl.isNotEmpty()) {
                     ShowGalleryButton(
-                        galleryOpened = galleryOpened,
-                        onClick = {
-                            galleryOpened = !galleryOpened
-                        }
+                            galleryOpened = galleryOpened,
+                            onClick = {
+                                galleryOpened = !galleryOpened
+                            }
                     )
                 }
 
                 GalleryContainer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = tiny,
-                            bottom = extraLarge,
-                            start = extraLarge,
-                            end = extraLarge
-                        ),
-                    isVisible = galleryOpened,
-                    isLoading = galleryLoading,
-                    progressIndicatorStrokeWidth = extraSmall,
-                    progressIndicatorSize = 24.dp,
-                    images = downloadedImages
+                        modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                        top = tiny,
+                                        bottom = extraLarge,
+                                        start = extraLarge,
+                                        end = extraLarge
+                                ),
+                        isVisible = galleryOpened,
+                        isLoading = galleryLoading,
+                        progressIndicatorStrokeWidth = extraSmall,
+                        progressIndicatorSize = 24.dp,
+                        images = downloadedImages
                 )
             }
         }
@@ -150,16 +149,16 @@ fun DiaryHolder(
 
 @Composable
 fun ShowGalleryButton(
-    galleryOpened: Boolean,
-    onClick: () -> Unit
+        galleryOpened: Boolean,
+        onClick: () -> Unit
 ) {
     TextButton(onClick = onClick) {
         Text(
-            text = if (galleryOpened)
-                stringResource(id = R.string.hide_gallery)
-            else
-                stringResource(id = R.string.show_gallery),
-            style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                text = if (galleryOpened)
+                    stringResource(id = R.string.hide_gallery)
+                else
+                    stringResource(id = R.string.show_gallery),
+                style = TextStyle(fontSize = MaterialTheme.typography.bodySmall.fontSize)
         )
     }
 }
@@ -168,11 +167,11 @@ fun ShowGalleryButton(
 @Preview
 fun DiaryHolderPreview() {
     DiaryHolder(
-        diary = Diary().apply {
-            title = "This a diary title to test"
-            description = "This is a diary description to test how looks on the app"
-            images = realmListOf("image1.png", "image2.png", "image3.png")
-        },
-        onDiaryClicked = {}
+            diary = HomeViewModel.DiaryCard(
+                    mood = Mood.Happy,
+                    description = "This is a diary description to test how looks on the app",
+                    imagesUrl = listOf("image1.png", "image2.png", "image3.png")
+            ),
+            onDiaryClicked = {}
     )
 }

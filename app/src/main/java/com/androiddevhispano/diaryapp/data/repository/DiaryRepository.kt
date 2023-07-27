@@ -9,9 +9,9 @@ import java.time.ZonedDateTime
 
 interface DiaryRepository {
 
-    fun getAllDiaries(): Flow<RequestState<Map<LocalDate, List<Diary>>>>
+    fun getAllDiaries(): Flow<RequestState<List<Diary>>>
 
-    fun getFilteredDiariesByDate(zonedDateTime: ZonedDateTime): Flow<RequestState<Map<LocalDate, List<Diary>>>>
+    fun getFilteredDiariesByDate(zonedDateTime: ZonedDateTime): Flow<RequestState<List<Diary>>>
 
     fun getDiaryById(diaryId: ObjectId) : RequestState<Diary>
 

@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,38 +29,38 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 fun NavGraphBuilder.homeRoute(
-    navigateToWrite: (diaryId: String?) -> Unit,
-    navigateToAuthentication: () -> Unit,
-    onDataLoaded: () -> Unit
+        navigateToWrite: (diaryId: String?) -> Unit,
+        navigateToAuthentication: () -> Unit,
+        onDataLoaded: () -> Unit
 ) {
     composable(
-        route = Screen.Home.route,
-        enterTransition = {
-            when (initialState.destination.route) {
-                Screen.Authentication.route -> {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
-                }
+            route = Screen.Home.route,
+            enterTransition = {
+                when (initialState.destination.route) {
+                    Screen.Authentication.route -> {
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                    }
 
-                else -> {
-                    slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                    else -> {
+                        slideIntoContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                    }
+                }
+            },
+            exitTransition = {
+                when (targetState.destination.route) {
+                    Screen.Authentication.route -> {
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
+                    }
+
+                    else -> {
+                        slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
+                    }
                 }
             }
-        },
-        exitTransition = {
-            when (targetState.destination.route) {
-                Screen.Authentication.route -> {
-                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Right)
-                }
-
-                else -> {
-                    slideOutOfContainer(AnimatedContentTransitionScope.SlideDirection.Left)
-                }
-            }
-        }
     ) {
         val viewModel: HomeViewModel = hiltViewModel()
 
-        val diariesRequestState by viewModel.diaries
+        val homeUiState by viewModel.homeUiState.collectAsState()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         var signOutDialogOpenedState by remember {
             mutableStateOf(false)
@@ -70,81 +71,80 @@ fun NavGraphBuilder.homeRoute(
         val coroutineScope = rememberCoroutineScope()
         val context = LocalContext.current
 
-        LaunchedEffect(key1 = diariesRequestState) {
-            if (diariesRequestState !is RequestState.Idle) {
+        LaunchedEffect(key1 = Unit) {
+            if (homeUiState.isLoading) {
                 onDataLoaded()
             }
         }
 
         HomeScreen(
-            diariesRequestState = diariesRequestState,
-            drawerState = drawerState,
-            diariesFilterByDate = viewModel.isSpecificDateSelected,
-            navigateToWrite = { diaryId ->
-                navigateToWrite(diaryId)
-            },
-            onMenuClicked = {
-                coroutineScope.launch {
-                    drawerState.open()
+                homeUiState = homeUiState,
+                drawerState = drawerState,
+                navigateToWrite = { diaryId ->
+                    navigateToWrite(diaryId)
+                },
+                onMenuClicked = {
+                    coroutineScope.launch {
+                        drawerState.open()
+                    }
+                },
+                onResetFilterByDateClicked = {
+                    viewModel.getDiaries()
+                },
+                onSpecificDateClicked = { specificDateToShowDiaries ->
+                    viewModel.getDiaries(specificDateToShowDiaries)
+                },
+                onDeleteAllClicked = {
+                    deleteAllDialogOpenedState = true
+                },
+                onSignOutClicked = {
+                    signOutDialogOpenedState = true
                 }
-            },
-            onResetFilterByDateClicked = {
-                viewModel.getDiaries()
-            },
-            onSpecificDateClicked = { specificDateToShowDiaries ->
-                viewModel.getDiaries(specificDateToShowDiaries)
-            },
-            onDeleteAllClicked = {
-                deleteAllDialogOpenedState = true
-            },
-            onSignOutClicked = {
-                signOutDialogOpenedState = true
-            }
         )
 
         DisplayAlertDialog(
-            showDialog = signOutDialogOpenedState,
-            title = stringResource(id = R.string.sign_out),
-            message = stringResource(id = R.string.confirm_sign_out),
-            onDialogClosed = {
-                signOutDialogOpenedState = false
-            },
-            onConfirmClicked = {
-                coroutineScope.launch(Dispatchers.IO) {
-                    App.create(MONGO_APP_ID).currentUser?.logOut()
-                    Firebase.auth.signOut()
-                    withContext(Dispatchers.Main) {
-                        navigateToAuthentication()
+                showDialog = signOutDialogOpenedState,
+                title = stringResource(id = R.string.sign_out),
+                message = stringResource(id = R.string.confirm_sign_out),
+                onDialogClosed = {
+                    signOutDialogOpenedState = false
+                },
+                onConfirmClicked = {
+                    coroutineScope.launch(Dispatchers.IO) {
+                        App.create(MONGO_APP_ID).currentUser?.logOut()
+                        Firebase.auth.signOut()
+                        withContext(Dispatchers.Main) {
+                            navigateToAuthentication()
+                        }
                     }
                 }
-            }
         )
 
         DisplayAlertDialog(
-            showDialog = deleteAllDialogOpenedState,
-            title = stringResource(id = R.string.delete_all_diaries),
-            message = stringResource(id = R.string.confirm_delete_all_diaries),
-            onDialogClosed = {
-                deleteAllDialogOpenedState = false
-            },
-            onConfirmClicked = {
-                viewModel.deleteAllDiaries(
-                    onSuccess = {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.delete_all_diaries_successful),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    },
-                    onError = {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.delete_all_diaries_error),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
-            }
+                showDialog = deleteAllDialogOpenedState,
+                title = stringResource(id = R.string.delete_all_diaries),
+                message = stringResource(id = R.string.confirm_delete_all_diaries),
+                onDialogClosed = {
+                    deleteAllDialogOpenedState = false
+                },
+                onConfirmClicked = {
+                    viewModel.deleteAllDiaries(
+                            onSuccess = {
+                                Toast.makeText(
+                                        context,
+                                        context.getString(R.string.delete_all_diaries_successful),
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            onError = {
+                                Toast.makeText(
+                                        context,
+                                        context.getString(R.string.delete_all_diaries_error),
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                    )
+                }
         )
     }
 }

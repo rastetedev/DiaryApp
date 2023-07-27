@@ -22,8 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.androiddevhispano.diaryapp.R
-import com.androiddevhispano.diaryapp.models.Diary
-import com.androiddevhispano.diaryapp.utils.RequestState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
@@ -36,9 +34,8 @@ import java.time.ZonedDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    diariesRequestState: RequestState<Map<LocalDate, List<Diary>>>,
+    homeUiState: HomeViewModel.HomeUiState,
     drawerState: DrawerState,
-    diariesFilterByDate: Boolean,
     navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
     onResetFilterByDateClicked: () -> Unit,
@@ -58,9 +55,9 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     scrollBehavior = scrollBehavior,
-                    diariesAreNotEmpty = (diariesRequestState is RequestState.Success && diariesRequestState.data.isNotEmpty()),
+                    diariesAreNotEmpty = homeUiState.diaries.isNotEmpty(),
                     onMenuClicked = onMenuClicked,
-                    diariesFilterByDate = diariesFilterByDate,
+                        specificDateSelected = homeUiState.specificDateSelected,
                     onSpecificDateClicked = {
                         dateSheetPickerState.show()
                     },
@@ -78,19 +75,27 @@ fun HomeScreen(
             }
         ) { paddingValues ->
             when {
-                diariesRequestState is RequestState.Success && diariesRequestState.data.isNotEmpty() -> {
+                homeUiState.diaries.isNotEmpty() -> {
                     HomeContent(
                         modifier = Modifier
                             .padding(paddingValues),
-                        diaryNotes = diariesRequestState.data,
+                        homeUiState = homeUiState,
                         onDiaryClicked = { diaryId ->
                             navigateToWrite(diaryId)
                         }
                     )
                 }
 
-                diariesRequestState is RequestState.Error ||
-                        diariesRequestState is RequestState.Success -> {
+                homeUiState.isLoading -> {
+                    Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+               else -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -102,15 +107,6 @@ fun HomeScreen(
                                 fontWeight = FontWeight.Medium
                             )
                         )
-                    }
-                }
-
-                else -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
                     }
                 }
             }

@@ -3,6 +3,7 @@ package com.androiddevhispano.diaryapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -68,7 +69,9 @@ private fun retryUploadImagesToFirebase(
     scope.launch(Dispatchers.IO) {
         imageRepository.getImagesToUpload().forEach {
             retryUploadImageToFirebase(
-                image = it,
+                imageUri = it.imageUri.toUri(),
+                imageRemotePath = it.remoteImagePath,
+                sessionUri = it.sessionUri.toUri(),
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         imageRepository.removeImageToUpload(it.id)
@@ -87,7 +90,7 @@ private fun retryDeleteImagesRemovedFromFirebase(
         val imagesToDelete = imageRepository.getImagesToDelete()
         imagesToDelete.forEach { image ->
             retryDeletingImageFromFirebase(
-                remoteImagePath = image.remoteImagePath,
+                imageRemotePath = image.remoteImagePath,
                 onSuccess = {
                     scope.launch(Dispatchers.IO) {
                         imageRepository.removeImageToDelete(image.id)

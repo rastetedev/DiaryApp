@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.androiddevhispano.diaryapp.R
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +22,7 @@ fun HomeTopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     diariesAreNotEmpty: Boolean,
     onMenuClicked: () -> Unit,
-    diariesFilterByDate: Boolean,
+    specificDateSelected: ZonedDateTime?,
     onSpecificDateClicked: () -> Unit,
     onResetFilterByDateClicked: () -> Unit,
     onDeleteAllClicked: () -> Unit
@@ -38,7 +39,7 @@ fun HomeTopBar(
         },
         actions = {
             if(diariesAreNotEmpty){
-                if (diariesFilterByDate) {
+                if (specificDateSelected != null) {
                     IconButton(onClick = onResetFilterByDateClicked) {
                         Icon(imageVector = Icons.Default.Close, contentDescription = null)
                     }
