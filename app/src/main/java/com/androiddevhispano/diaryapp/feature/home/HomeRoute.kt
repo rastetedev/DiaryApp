@@ -101,7 +101,7 @@ fun NavGraphBuilder.homeRoute(
                     deleteAllDialogOpenedState = true
                 },
                 onGalleryClicked = { diaryId: String, imageRemotePathList: List<String> ->
-                    if(galleryState.isOpen){
+                    if(galleryState.diaryId == diaryId && galleryState.isOpen ){
                         viewModel.closeGallery()
                     } else {
                         viewModel.fetchImageUrlListOfDiary(
@@ -109,7 +109,6 @@ fun NavGraphBuilder.homeRoute(
                             imageRemotePathList = imageRemotePathList
                         )
                     }
-
                 },
                 onSignOutClicked = {
                     signOutDialogOpenedState = true
