@@ -2,6 +2,7 @@ package com.androiddevhispano.diaryapp.data.repository.diary_manager
 
 import android.net.Uri
 import arrow.core.Either
+import arrow.core.Nel
 import arrow.core.Option
 import com.androiddevhispano.diaryapp.data.models.Diary
 import com.androiddevhispano.diaryapp.data.repository.DomainException
@@ -31,11 +32,11 @@ interface DiaryManager {
         imageUriList: List<Uri>,
         imageRemotePathList: List<String>,
         imagesToRemoveRemotePathList: List<String>
-    ): Option<DomainException>
+    ): Either<Nel<DomainException>, Unit>
 
     suspend fun deleteDiary(
         diaryId: String,
         imagesToRemoveRemotePathList: List<String>
-    ): Option<DomainException>
+    ): Either<DomainException, Unit>
 
 }

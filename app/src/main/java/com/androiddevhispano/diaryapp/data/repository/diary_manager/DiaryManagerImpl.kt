@@ -2,14 +2,17 @@ package com.androiddevhispano.diaryapp.data.repository.diary_manager
 
 import android.net.Uri
 import arrow.core.Either
+import arrow.core.Nel
+import arrow.core.NonEmptyList
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.raise.option
-import com.androiddevhispano.diaryapp.data.repository.diary.DiaryRepository
-import com.androiddevhispano.diaryapp.data.repository.image.ImageRepository
+import arrow.core.raise.either
+import arrow.core.raise.zipOrAccumulate
 import com.androiddevhispano.diaryapp.data.models.Diary
 import com.androiddevhispano.diaryapp.data.repository.DomainException
+import com.androiddevhispano.diaryapp.data.repository.diary.DiaryRepository
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepository
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
@@ -67,7 +70,7 @@ class DiaryManagerImpl(
     /** WRITE **/
 
     override suspend fun getDiaryById(diaryId: String): Either<DomainException, Diary> {
-        return diaryRepository.getDiaryById(diaryId).map { it }
+        return diaryRepository.getDiaryById(diaryId)
     }
 
     override suspend fun upsertDiary(
@@ -76,25 +79,42 @@ class DiaryManagerImpl(
         imageUriList: List<Uri>,
         imageRemotePathList: List<String>,
         imagesToRemoveRemotePathList: List<String>
-    ): Option<DomainException> {
-        return option {
-            if (diaryId.isNullOrEmpty()) {
-                diaryRepository.insertDiary(diary).bind()
-            } else {
-                diaryRepository.updateDiary(diaryId, diary).bind()
-            }
-            imageRepository.uploadImages(imageUriList, imageRemotePathList).bind()
-            imageRepository.deleteImages(imagesToRemoveRemotePathList).bind()
+    ): Either<Nel<DomainException>, Unit> {
+        val upsertResult = if (diaryId.isNullOrEmpty()) {
+            diaryRepository.insertDiary(diary)
+        } else {
+            diaryRepository.updateDiary(diaryId, diary)
         }
+        return upsertResult.fold(
+            { exception ->
+                Either.Left(NonEmptyList.fromListUnsafe(listOf(exception)))
+            },
+            {
+                either {
+                    zipOrAccumulate(
+                        {
+                            imageRepository.uploadImages(imageUriList, imageRemotePathList).bind()
+                        },
+                        {
+                            imageRepository.deleteImages(imagesToRemoveRemotePathList).bind()
+
+                        }
+                    ) { _, _ ->
+                        Either.Right(Unit)
+                    }
+                }
+            }
+        )
     }
 
     override suspend fun deleteDiary(
         diaryId: String,
         imagesToRemoveRemotePathList: List<String>
-    ): Option<DomainException> {
-        return option {
-            diaryRepository.deleteDiary(diaryId).bind()
-            imageRepository.deleteImages(imagesToRemoveRemotePathList).bind()
-        }
+    ): Either<DomainException, Unit> {
+        return diaryRepository.deleteDiary(diaryId)
+            .fold(
+                { imageRepository.deleteImages(imagesToRemoveRemotePathList) },
+                { Either.Left(it) }
+            )
     }
 }

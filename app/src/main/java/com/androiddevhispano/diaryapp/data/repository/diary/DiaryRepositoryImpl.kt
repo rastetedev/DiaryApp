@@ -137,22 +137,22 @@ class DiaryRepositoryImpl : DiaryRepository {
         }
     }
 
-    override suspend fun insertDiary(diary: Diary): Option<DomainException> {
+    override suspend fun insertDiary(diary: Diary): Either<DomainException, Diary> {
         return if (user != null) {
             realm.write {
                 try {
                     copyToRealm(diary.apply { ownerId = user.id })
-                    None
+                    Either.Right(diary)
                 } catch (e: Exception) {
-                    Some(DomainException.GeneralException(e.message))
+                    Either.Left(DomainException.GeneralException(e.message))
                 }
             }
         } else {
-            Some(DomainException.UserNotAuthenticatedException())
+            Either.Left(DomainException.UserNotAuthenticatedException())
         }
     }
 
-    override suspend fun updateDiary(diaryId: String, diary: Diary): Option<DomainException> {
+    override suspend fun updateDiary(diaryId: String, diary: Diary): Either<DomainException, Diary> {
         return if (user != null) {
             realm.write {
                 val diaryQueried = query<Diary>(query = "_id == $0", ObjectId(diaryId))
@@ -166,13 +166,13 @@ class DiaryRepositoryImpl : DiaryRepository {
                         images = diary.images
                         date = diary.date
                     }
-                    None
+                    Either.Right(diary)
                 } else {
-                    Some(DomainException.DiaryNotExistException())
+                    Either.Left(DomainException.DiaryNotExistException())
                 }
             }
         } else {
-            Some(DomainException.UserNotAuthenticatedException())
+            Either.Left(DomainException.UserNotAuthenticatedException())
         }
     }
 

@@ -4,12 +4,12 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManager
 import com.androiddevhispano.diaryapp.core_ui.models.Mood
-import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
-import com.androiddevhispano.diaryapp.ui.utils.createRemoteName
 import com.androiddevhispano.diaryapp.data.mapper.createDiary
 import com.androiddevhispano.diaryapp.data.mapper.toDiaryModel
+import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManager
+import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
+import com.androiddevhispano.diaryapp.ui.utils.createRemoteName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -194,8 +194,12 @@ class WriteViewModel(
 
             withContext(Dispatchers.Main) {
                 result.fold(
-                    { onSuccess() },
-                    { onError(it.message) }
+                    { errorList ->
+                        onError(errorList.all.joinToString { it.message })
+                    },
+                    {
+                        onSuccess()
+                    }
                 )
             }
 
@@ -216,8 +220,8 @@ class WriteViewModel(
 
                 withContext(Dispatchers.Main) {
                     diaryDeletedResult.fold(
-                        { onSuccess() },
-                        { onError(it.message) }
+                        { onError(it.message) },
+                        { onSuccess() }
                     )
                 }
             }

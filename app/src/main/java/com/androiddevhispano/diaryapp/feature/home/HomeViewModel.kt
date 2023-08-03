@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androiddevhispano.diaryapp.core_ui.models.Mood
+import com.androiddevhispano.diaryapp.data.mapper.toDiaryCard
 import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManager
 import com.androiddevhispano.diaryapp.ui.connectivity.ConnectivityObserver
-import com.androiddevhispano.diaryapp.data.mapper.toDiaryCard
-import com.androiddevhispano.diaryapp.core_ui.models.Mood
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -215,7 +215,7 @@ class HomeViewModel(
 
     data class HomeUiState(
         val diaries: Map<LocalDate, List<DiaryCard>> = emptyMap(),
-        val isLoading: Boolean = false,
+        val isLoading: Boolean = true,
         val specificDateSelected: ZonedDateTime? = null,
     )
 

@@ -2,13 +2,14 @@ package com.androiddevhispano.diaryapp.data.repository.image
 
 import android.net.Uri
 import androidx.core.net.toUri
+import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToDelete
 import com.androiddevhispano.diaryapp.data.datasource.local.image.dao.ImageToDeleteDao
-import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToUpload
 import com.androiddevhispano.diaryapp.data.datasource.local.image.dao.ImageToUploadDao
+import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToDelete
+import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToUpload
 import com.androiddevhispano.diaryapp.data.repository.DomainException
 import com.androiddevhispano.diaryapp.ui.utils.FIREBASE_IMAGES_DIRECTORY
 import com.google.firebase.auth.FirebaseAuth
@@ -66,7 +67,7 @@ class ImageRepositoryImpl @Inject constructor(
     override suspend fun uploadImages(
         imageUriList: List<Uri>,
         imageRemotePathList: List<String>
-    ): Option<DomainException> {
+    ): Either<DomainException, Unit> {
 
         return try {
             val storage = FirebaseStorage.getInstance().reference
@@ -94,13 +95,13 @@ class ImageRepositoryImpl @Inject constructor(
             imagesToUploadResult.forEach {
                 addImageToUpload(it)
             }
-            None
+            Either.Right(Unit)
         } catch (e: Exception) {
-            Some(DomainException.GeneralException(e.message))
+            Either.Left(DomainException.GeneralException(e.message))
         }
     }
 
-    override suspend fun deleteImages(imageRemotePathList: List<String>): Option<DomainException> {
+    override suspend fun deleteImages(imageRemotePathList: List<String>):  Either<DomainException, Unit> {
         return try {
             val storage = FirebaseStorage.getInstance().reference
             val imagesToDeleteResult = suspendCoroutine<List<ImageToDelete>> { continuation ->
@@ -117,9 +118,9 @@ class ImageRepositoryImpl @Inject constructor(
             imagesToDeleteResult.forEach {
                 addImageToDelete(it)
             }
-            None
+            Either.Right(Unit)
         } catch (e: Exception) {
-            Some(DomainException.GeneralException(e.message))
+            Either.Left(DomainException.GeneralException(e.message))
         }
     }
 

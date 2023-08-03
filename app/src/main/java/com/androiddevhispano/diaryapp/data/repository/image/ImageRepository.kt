@@ -1,6 +1,7 @@
 package com.androiddevhispano.diaryapp.data.repository.image
 
 import android.net.Uri
+import arrow.core.Either
 import arrow.core.Option
 import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToDelete
 import com.androiddevhispano.diaryapp.data.datasource.local.image.table.ImageToUpload
@@ -15,9 +16,9 @@ interface ImageRepository {
     suspend fun uploadImages(
         imageUriList: List<Uri>,
         imageRemotePathList: List<String>
-    ): Option<DomainException>
+    ): Either<DomainException, Unit>
 
-    suspend fun deleteImages(imageRemotePathList: List<String>): Option<DomainException>
+    suspend fun deleteImages(imageRemotePathList: List<String>):  Either<DomainException, Unit>
 
     suspend fun retryImagesToUpload()
 
