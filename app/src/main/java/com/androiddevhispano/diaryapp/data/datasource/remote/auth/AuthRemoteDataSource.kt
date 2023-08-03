@@ -1,8 +1,8 @@
-package com.androiddevhispano.diaryapp.data.repository.auth
+package com.androiddevhispano.diaryapp.data.datasource.remote.auth
 
 import arrow.core.Either
 
-interface AuthRepository {
+interface AuthRemoteDataSource {
 
     fun isUserSignIn(): Boolean
 

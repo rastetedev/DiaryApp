@@ -1,59 +1,51 @@
 package com.androiddevhispano.diaryapp.di
 
-import android.content.Context
 import androidx.room.Room
+import com.androiddevhispano.diaryapp.data.datasource.local.DiaryDatabase
+import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManager
+import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManagerImpl
+import com.androiddevhispano.diaryapp.data.repository.diary.DiaryRepository
+import com.androiddevhispano.diaryapp.data.repository.diary.DiaryRepositoryImpl
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepository
+import com.androiddevhispano.diaryapp.data.repository.image.ImageRepositoryImpl
 import com.androiddevhispano.diaryapp.ui.connectivity.ConnectivityObserver
 import com.androiddevhispano.diaryapp.ui.connectivity.NetworkConnectivityObserver
-import com.androiddevhispano.diaryapp.data.localdb.DiaryDatabase
-import com.androiddevhispano.diaryapp.data.localdb.dao.ImageToDeleteDao
-import com.androiddevhispano.diaryapp.data.localdb.dao.ImageToUploadDao
-import com.androiddevhispano.diaryapp.data.repository.ImageRepository
-import com.androiddevhispano.diaryapp.data.repository.ImageRepositoryImpl
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.android.ext.koin.androidApplication
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
+val appModule = module {
 
-    @Provides
-    @Singleton
-    fun provideDatabase(
-        @ApplicationContext context: Context
-    ): DiaryDatabase {
-        return Room.databaseBuilder(
-            context,
+    single {
+        Room.databaseBuilder(
+            androidApplication(),
             DiaryDatabase::class.java,
             name = "diary_database.db"
         ).build()
     }
 
-    @Provides
-    @Singleton
-    fun provideNetworkConnectivityObserver(
-        @ApplicationContext context: Context
-    ): ConnectivityObserver {
-        return NetworkConnectivityObserver(context)
+    single {
+        val database = get<DiaryDatabase>()
+        database.imageToDeleteDao()
     }
 
-    @Provides
-    @Singleton
-    fun provideImageToUploadDao(database: DiaryDatabase) = database.imageToUploadDao()
+    single {
+        val database = get<DiaryDatabase>()
+        database.imageToUploadDao()
+    }
 
-    @Provides
-    @Singleton
-    fun provideImageToDeleteDao(database: DiaryDatabase) = database.imageToDeleteDao()
+    single<ConnectivityObserver> {
+        NetworkConnectivityObserver(androidApplication())
+    }
 
-    @Provides
-    @Singleton
-    fun provideImageRepository(
-        imageToUploadDao: ImageToUploadDao,
-        imageToDeleteDao: ImageToDeleteDao
-    ): ImageRepository {
-        return ImageRepositoryImpl(imageToUploadDao, imageToDeleteDao)
+    single<ImageRepository> {
+        ImageRepositoryImpl(get(), get())
+    }
+
+    single<DiaryRepository> {
+        DiaryRepositoryImpl()
+    }
+
+    single<DiaryManager> {
+        DiaryManagerImpl(get(), get())
     }
 }

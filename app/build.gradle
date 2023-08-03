@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
     id 'io.realm.kotlin'
     id 'com.google.gms.google-services'
 }
@@ -96,16 +95,8 @@ dependencies {
     implementation libs.kotlinx.coroutines.core
     implementation libs.realm.sync
 
-    // DAGGER HILT
-    implementation libs.google.dagger.hilt.android
-    kapt libs.google.dagger.hilt.compiler
-    implementation libs.androidx.hilt.navigation.compose
-
     // COIL
     implementation libs.coil.compose
-
-    // PAGER
-    implementation libs.google.accompanist.pager
 
     // DATE-TIME DIALOG
     implementation libs.sheets.compose.dialogs.core
@@ -128,4 +119,10 @@ dependencies {
     //ARROW
     implementation libs.arrow.core
     implementation libs.arrow.fx.coroutines
+
+    //KOIN
+    implementation libs.koin.core
+    implementation libs.koin.android
+    implementation libs.koin.androidx.compose
+
 }
