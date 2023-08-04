@@ -38,16 +38,16 @@ fun HomeTopBar(
             Text(text = stringResource(id = R.string.diary))
         },
         actions = {
-            if(diariesAreNotEmpty){
-                if (specificDateSelected != null) {
-                    IconButton(onClick = onResetFilterByDateClicked) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
-                    }
-                } else {
-                    IconButton(onClick = onSpecificDateClicked) {
-                        Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
-                    }
+            if (specificDateSelected != null) {
+                IconButton(onClick = onResetFilterByDateClicked) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = null)
                 }
+            } else {
+                IconButton(onClick = onSpecificDateClicked) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = null)
+                }
+            }
+            if (diariesAreNotEmpty) {
                 IconButton(onClick = onDeleteAllClicked) {
                     Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                 }
