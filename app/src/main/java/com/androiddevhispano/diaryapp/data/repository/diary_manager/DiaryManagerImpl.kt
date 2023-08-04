@@ -25,21 +25,19 @@ class DiaryManagerImpl(
 
     override suspend fun fetchRemoteImageUriList(remoteImagePathList: List<String>): Either<String, List<Uri>> {
         val remoteImageUriList = mutableListOf<Uri>()
-
-        remoteImagePathList.forEach { remoteImagePath ->
-            if (remoteImagePath.trim().isNotEmpty()) {
-                try {
+        try {
+            remoteImagePathList.forEach { remoteImagePath ->
+                if (remoteImagePath.trim().isNotEmpty()) {
                     val imageUri = FirebaseStorage.getInstance().reference
                         .child(remoteImagePath.trim())
                         .downloadUrl
                         .await()
                     remoteImageUriList.add(imageUri)
-                } catch (e: Exception) {
-                    Either.Left(e.message)
                 }
             }
+        } catch (e: Exception) {
+            return Either.Left(e.message ?: "")
         }
-
         return Either.Right(remoteImageUriList)
     }
 
@@ -93,7 +91,8 @@ class DiaryManagerImpl(
                 either {
                     zipOrAccumulate(
                         {
-                            imageRepository.uploadImages(imageUriList, imageRemotePathList).bind()
+                            imageRepository.uploadImages(imageUriList, imageRemotePathList)
+                                .bind()
                         },
                         {
                             imageRepository.deleteImages(imagesToRemoveRemotePathList).bind()

@@ -35,13 +35,14 @@ import java.time.ZonedDateTime
 @Composable
 fun HomeScreen(
     homeUiState: HomeViewModel.HomeUiState,
+    diaries: Map<LocalDate, List<HomeViewModel.DiaryCard>>,
     drawerState: DrawerState,
     navigateToWrite: (diaryId: String?) -> Unit,
     onMenuClicked: () -> Unit,
     onResetFilterByDateClicked: () -> Unit,
     onSpecificDateClicked: (specificDate: ZonedDateTime) -> Unit,
     onDeleteAllClicked: () -> Unit,
-    onGalleryClicked: (diaryId: String, imageRemotePathList: List<String>) -> Unit,
+    onGalleryClicked: (diaryId: String) -> Unit,
     onSignOutClicked: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -56,7 +57,7 @@ fun HomeScreen(
             topBar = {
                 HomeTopBar(
                     scrollBehavior = scrollBehavior,
-                    diariesAreNotEmpty = homeUiState.diaries.isNotEmpty(),
+                    diariesAreNotEmpty = diaries.isNotEmpty(),
                     onMenuClicked = onMenuClicked,
                     specificDateSelected = homeUiState.specificDateSelected,
                     onSpecificDateClicked = {
@@ -76,11 +77,11 @@ fun HomeScreen(
             }
         ) { paddingValues ->
             when {
-                homeUiState.diaries.isNotEmpty() -> {
+                diaries.isNotEmpty() -> {
                     HomeContent(
                         modifier = Modifier
                             .padding(paddingValues),
-                        homeUiState = homeUiState,
+                        diaries = diaries,
                         onGalleryClicked = onGalleryClicked,
                         onDiaryClicked = { diaryId ->
                             navigateToWrite(diaryId)

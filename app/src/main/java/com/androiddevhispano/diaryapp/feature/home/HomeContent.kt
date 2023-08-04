@@ -9,13 +9,14 @@ import androidx.compose.ui.Modifier
 import com.androiddevhispano.diaryapp.feature.home.diary.DateHeader
 import com.androiddevhispano.diaryapp.feature.home.diary.DiaryHolder
 import com.androiddevhispano.diaryapp.ui.theme.Size.screenPadding
+import java.time.LocalDate
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    homeUiState: HomeViewModel.HomeUiState,
-    onGalleryClicked: (diaryId: String, imageRemotePathList: List<String>) -> Unit,
+    diaries: Map<LocalDate, List<HomeViewModel.DiaryCard>>,
+    onGalleryClicked: (diaryId: String) -> Unit,
     onDiaryClicked: (diaryId: String) -> Unit
 ) {
 
@@ -24,14 +25,14 @@ fun HomeContent(
         modifier = modifier
             .padding(horizontal = screenPadding),
     ) {
-        homeUiState.diaries.forEach { (localDate, diaries) ->
+        diaries.forEach { (localDate, diaries) ->
             stickyHeader(key = localDate) {
                 DateHeader(localDate = localDate)
             }
 
             items(
                 items = diaries,
-                key = { it.id }
+                key = { it.diaryId }
             ) {
                 DiaryHolder(
                     diary = it,

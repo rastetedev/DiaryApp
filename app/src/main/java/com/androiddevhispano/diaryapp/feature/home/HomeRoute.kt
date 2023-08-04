@@ -4,7 +4,6 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,7 +60,7 @@ fun NavGraphBuilder.homeRoute(
         val viewModel: HomeViewModel = koinViewModel()
 
         val homeUiState by viewModel.homeUiState.collectAsState()
-        val galleryState by viewModel.galleryState.collectAsState()
+        val diaries by viewModel.diaries.collectAsState()
 
         var signOutDialogOpenedState by remember {
             mutableStateOf(false)
@@ -79,43 +78,35 @@ fun NavGraphBuilder.homeRoute(
             onDataLoaded()
         }
 
-        CompositionLocalProvider(LocalGalleryState provides galleryState) {
-            HomeScreen(
-                homeUiState = homeUiState,
-                drawerState = drawerState,
-                navigateToWrite = { diaryId ->
-                    navigateToWrite(diaryId)
-                    viewModel.closeGallery()
-                },
-                onMenuClicked = {
-                    coroutineScope.launch {
-                        drawerState.open()
-                    }
-                },
-                onResetFilterByDateClicked = {
-                    viewModel.getDiaries()
-                },
-                onSpecificDateClicked = { specificDateToShowDiaries ->
-                    viewModel.getDiaries(specificDateToShowDiaries)
-                },
-                onDeleteAllClicked = {
-                    deleteAllDialogOpenedState = true
-                },
-                onGalleryClicked = { diaryId: String, imageRemotePathList: List<String> ->
-                    if(galleryState.diaryId == diaryId && galleryState.isOpen ){
-                        viewModel.closeGallery()
-                    } else {
-                        viewModel.fetchImageUrlListOfDiary(
-                            diaryId = diaryId,
-                            imageRemotePathList = imageRemotePathList
-                        )
-                    }
-                },
-                onSignOutClicked = {
-                    signOutDialogOpenedState = true
+        HomeScreen(
+            homeUiState = homeUiState,
+            diaries = diaries,
+            drawerState = drawerState,
+            navigateToWrite = { diaryId ->
+                navigateToWrite(diaryId)
+            },
+            onMenuClicked = {
+                coroutineScope.launch {
+                    drawerState.open()
                 }
-            )
-        }
+            },
+            onResetFilterByDateClicked = {
+                viewModel.getDiaries()
+            },
+            onSpecificDateClicked = { specificDateToShowDiaries ->
+                viewModel.getDiaries(specificDateToShowDiaries)
+            },
+            onDeleteAllClicked = {
+                deleteAllDialogOpenedState = true
+            },
+            onGalleryClicked = { diaryId: String ->
+               viewModel.toggleGalleryDiaryCard(diaryId)
+            },
+            onSignOutClicked = {
+                signOutDialogOpenedState = true
+            }
+        )
+
 
         DisplayAlertDialog(
             showDialog = signOutDialogOpenedState,

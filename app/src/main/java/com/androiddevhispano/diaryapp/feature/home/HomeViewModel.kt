@@ -14,11 +14,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.time.ZonedDateTime
 
 class HomeViewModel(
@@ -32,8 +34,11 @@ class HomeViewModel(
     private val _homeUiState = MutableStateFlow(HomeUiState())
     val homeUiState = _homeUiState.asStateFlow()
 
-    private val _galleryState = MutableStateFlow(GalleryState())
-    val galleryState = _galleryState.asStateFlow()
+    private var _diaryCardListState = MutableStateFlow<List<DiaryCard>>(emptyList())
+
+    val diaries = _diaryCardListState.map { list ->
+        list.groupBy { it.date.toLocalDate() }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), initialValue = emptyMap())
 
     private var networkStatus by mutableStateOf(ConnectivityObserver.Status.UNAVAILABLE)
 
@@ -76,22 +81,15 @@ class HomeViewModel(
                             {
                                 _homeUiState.update {
                                     it.copy(
-                                        isLoading = false,
-                                        diaries = emptyMap()
+                                        isLoading = false
                                     )
                                 }
                             },
                             { list ->
+                                _diaryCardListState.value = list.map { it.toDiaryCard() }
                                 _homeUiState.update {
                                     it.copy(
-                                        isLoading = false,
-                                        diaries = list
-                                            .map { diary ->
-                                                diary.toDiaryCard()
-                                            }
-                                            .groupBy { diaryCard ->
-                                                diaryCard.date.toLocalDate()
-                                            }
+                                        isLoading = false
                                     )
                                 }
                             }
@@ -113,22 +111,15 @@ class HomeViewModel(
                             {
                                 _homeUiState.update {
                                     it.copy(
-                                        isLoading = false,
-                                        diaries = emptyMap()
+                                        isLoading = false
                                     )
                                 }
                             },
                             { list ->
+                                _diaryCardListState.value = list.map { it.toDiaryCard() }
                                 _homeUiState.update {
                                     it.copy(
-                                        isLoading = false,
-                                        diaries = list
-                                            .map { diary ->
-                                                diary.toDiaryCard()
-                                            }
-                                            .groupBy { diaryCard ->
-                                                diaryCard.date.toLocalDate()
-                                            }
+                                        isLoading = false
                                     )
                                 }
                             }
@@ -148,11 +139,7 @@ class HomeViewModel(
                 withContext(Dispatchers.Main) {
                     result.fold(
                         ifEmpty = {
-                            _homeUiState.update {
-                                it.copy(
-                                    diaries = emptyMap()
-                                )
-                            }
+                            _diaryCardListState.value = emptyList()
                             onSuccess()
                         },
                         ifSome = {
@@ -164,15 +151,19 @@ class HomeViewModel(
         }
     }
 
-    fun fetchImageUrlListOfDiary(diaryId: String, imageRemotePathList: List<String>) {
+    private fun fetchImageUrlListOfDiary(diaryId: String, imageRemotePathList: List<String>) {
         viewModelScope.launch(Dispatchers.IO) {
+
+            val diaryCard = findDiaryCard(diaryId)
+
             withContext(Dispatchers.Main) {
-                _galleryState.update {
-                    it.copy(
-                        diaryId = diaryId,
-                        isLoading = true,
-                        isOpen = true,
-                    )
+
+                val modifiedDiary = diaryCard?.copy(
+                    isLoading = true,
+                    isOpen = true
+                )
+                modifiedDiary?.let {
+                    replaceDiaryCard(oldDiaryCard = diaryCard, newDiaryCard = it)
                 }
             }
 
@@ -180,21 +171,25 @@ class HomeViewModel(
                 .fold(
                     ifLeft = {
                         withContext(Dispatchers.Main) {
-                            _galleryState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    isOpen = false,
-                                )
+                            val modifiedDiary = diaryCard?.copy(
+                                isLoading = false,
+                                isOpen = false,
+                                hasError = true
+                            )
+                            modifiedDiary?.let {
+                                replaceDiaryCard(oldDiaryCard = diaryCard, newDiaryCard = it)
                             }
                         }
                     },
                     ifRight = { urlList ->
                         withContext(Dispatchers.Main) {
-                            _galleryState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    urlList = urlList
-                                )
+                            val modifiedDiary = diaryCard?.copy(
+                                isLoading = false,
+                                isOpen = true,
+                                imagesUriList = urlList
+                            )
+                            modifiedDiary?.let {
+                                replaceDiaryCard(oldDiaryCard = diaryCard, newDiaryCard = it)
                             }
                         }
                     }
@@ -202,36 +197,52 @@ class HomeViewModel(
         }
     }
 
-    fun closeGallery() {
-        _galleryState.update {
-            it.copy(
-                diaryId = "",
-                isLoading = false,
-                isOpen = false,
-                urlList = emptyList()
-            )
+    fun toggleGalleryDiaryCard(diaryId: String) {
+        val diaryCard = findDiaryCard(diaryId)
+
+        diaryCard?.let {
+            if (diaryCard.isOpen) {
+                val modifiedDiary = diaryCard.copy(
+                    isOpen = false,
+                    isLoading = false
+                )
+                replaceDiaryCard(oldDiaryCard = diaryCard, newDiaryCard = modifiedDiary)
+            } else {
+                fetchImageUrlListOfDiary(diaryId, diaryCard.imagesUrl)
+            }
+        }
+    }
+
+    private fun findDiaryCard(diaryId: String): DiaryCard? {
+        return _diaryCardListState.value.find {
+            it.diaryId == diaryId
+        }
+    }
+
+    private fun replaceDiaryCard(oldDiaryCard: DiaryCard, newDiaryCard: DiaryCard) {
+        _diaryCardListState.value = _diaryCardListState.value.map { diaryCard ->
+            if (diaryCard.diaryId == oldDiaryCard.diaryId) {
+                newDiaryCard
+            } else {
+                diaryCard
+            }
         }
     }
 
     data class HomeUiState(
-        val diaries: Map<LocalDate, List<DiaryCard>> = emptyMap(),
         val isLoading: Boolean = true,
         val specificDateSelected: ZonedDateTime? = null,
     )
 
     data class DiaryCard(
-        val id: String = "",
+        val diaryId: String = "",
         val mood: Mood = Mood.Neutral,
         val description: String = "",
         val date: ZonedDateTime = ZonedDateTime.now(),
         val imagesUrl: List<String> = emptyList(),
-        val cardGalleryState: CardGalleryState = CardGalleryState()
-    )
-
-    data class CardGalleryState(
         val isLoading: Boolean = false,
         val isOpen: Boolean = false,
         val hasError: Boolean = false,
-        val imagesUriList: List<Uri> = emptyList()
+        val imagesUriList: List<Uri> = emptyList(),
     )
 }

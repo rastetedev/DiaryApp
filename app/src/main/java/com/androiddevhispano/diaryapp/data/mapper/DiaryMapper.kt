@@ -13,7 +13,7 @@ import com.androiddevhispano.diaryapp.core_ui.models.Diary as DiaryModel
 
 fun Diary.toDiaryCard() =
     HomeViewModel.DiaryCard(
-        id = this._id.toHexString(),
+        diaryId = this._id.toHexString(),
         mood = Mood.valueOf(this.mood),
         description = this.description,
         date = this.date.toInstant().atZone(ZoneId.systemDefault()),
