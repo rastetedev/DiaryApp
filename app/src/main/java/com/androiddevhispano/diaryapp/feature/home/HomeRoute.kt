@@ -85,6 +85,7 @@ fun NavGraphBuilder.homeRoute(
                 drawerState = drawerState,
                 navigateToWrite = { diaryId ->
                     navigateToWrite(diaryId)
+                    viewModel.closeGallery()
                 },
                 onMenuClicked = {
                     coroutineScope.launch {

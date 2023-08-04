@@ -10,6 +10,7 @@ import com.androiddevhispano.diaryapp.data.mapper.toDiaryModel
 import com.androiddevhispano.diaryapp.data.repository.diary_manager.DiaryManager
 import com.androiddevhispano.diaryapp.navigation.Screen.Companion.DIARY_ID_ARGUMENT
 import com.androiddevhispano.diaryapp.ui.utils.createRemoteName
+import com.androiddevhispano.diaryapp.ui.utils.extractImagePath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,7 +59,6 @@ class WriteViewModel(
                             }
                         }
                     }, {
-
                         withContext(Dispatchers.Main) {
                             setTitle(it.title)
                             setDescription(it.description)
@@ -80,13 +80,13 @@ class WriteViewModel(
                                                 }
                                             }, { list ->
                                                 withContext(Dispatchers.Main) {
-                                                    _writeUiState.update {
-                                                        it.copy(
+                                                    _writeUiState.update {writeUiState ->
+                                                        writeUiState.copy(
                                                             isLoadingImages = false,
                                                             imagesToShow = list.map { imageUri ->
                                                                 GalleryImage(
                                                                     imageUri = imageUri,
-                                                                    remoteImagePath = imageUri.toString()
+                                                                    remoteImagePath = imageUri.extractImagePath()
                                                                 )
                                                             }
                                                         )
@@ -249,7 +249,7 @@ class WriteViewModel(
                 imagesToDelete = it.imagesToDelete +
                         GalleryImage(
                             imageUri = imageUri,
-                            remoteImagePath = imageUri.toString()
+                            remoteImagePath = imageUri.extractImagePath()
                         ),
                 imagesToShow = it.imagesToShow.filter { gallery ->
                     gallery.imageUri != imageUri
